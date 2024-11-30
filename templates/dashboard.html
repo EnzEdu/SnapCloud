@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, {{ user[0] }}</h1>
+        <p>Email: {{ user[1] }}</p>
+        <p>Description: {{ user[2] }}</p>
+        <p>Member Since: {{ user[3] }}</p>
+    
+        <h3>Profile Picture:</h3>
+            <img src="{{ user[4] }}" alt="Profile Picture" width="150">
+
+        <div class="links">
+            <a href="/settings">Settings</a> | 
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+</body>
+</html>
