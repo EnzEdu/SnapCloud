@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'>
+    <title>Snap Cloud</title>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class='bx bxs-cloud'></i>
+            <span>Snap Cloud</span>
+            <i class='bx bxs-cloud'></i>
+        </div>
+        <div class="navbar-search">
+            <input type="text" placeholder="Pesquisar..." class="search-input">
+            <button class="search-btn">
+                <i class='bx bx-search'></i>
+            </button>
+        </div>
+        <div class="navbar-menu">
+            <button class="menu-btn">
+                <i class='bx bx-menu'></i>
+            </button>
+            <ul class="menu-dropdown">
+                <li><a href="edit_profile.html">Sua conta</a></li>
+                <li><a href="#" id="logout-btn">Sair</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="hero-banner">
+        <div class="hero-content">
+            <h1>Bem-vindo ao Snap Cloud</h1>
+            <p>Armazene e compartilhe seus arquivos de forma rápida e segura!</p>
+        </div>
+    </div>
+
+    <div class="content">
+        <section class="dashboard-section">
+            <h2>Seus Arquivos Recentes</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <i class='bx bx-image'></i>
+                    <span>Imagens</span>
+                </div>
+                <div class="card">
+                    <i class='bx bx-video'></i>
+                    <span>Vídeos</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="dashboard-section">
+            <h2>Pré-visualização de Mídias</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <i class='bx bx-video'></i>
+                    <span>Vídeos</span>
+                </div>
+                <div class="card">
+                    <i class='bx bx-image'></i>
+                    <span>Imagens</span>
+                </div>
+                <div class="card">
+                    <i class='bx bx-video'></i>
+                    <span>Vídeos</span>
+                </div>
+                <div class="card">
+                    <i class='bx bx-image'></i>
+                    <span>Imagens</span>
+                </div>
+                <div class="card">
+                    <i class='bx bx-video'></i>
+                    <span>Vídeos</span>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
