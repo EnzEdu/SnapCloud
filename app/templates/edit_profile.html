@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Perfil</title>
+</head>
+<body>
+    <h1>Editar Perfil</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.full_name.label }}<br>
+            {{ form.full_name(size=50) }}
+        </div>
+        <div>
+            {{ form.email.label }}<br>
+            {{ form.email(size=50) }}
+        </div>
+        <div>
+            {{ form.description.label }}<br>
+            {{ form.description(rows=4, cols=50) }}
+        </div>
+        <div>
+            <button type="submit">Salvar Alterações</button>
+        </div>
+    </form>
+</body>
+</html>
