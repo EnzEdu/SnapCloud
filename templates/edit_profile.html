@@ -81,7 +81,7 @@
                 <div class="input-box s">
                     <label for="senha">Senha:</label>
                     <div class="input-group">
-                        <input id="senha" name="senha" value="{{ user['password'] }}" readonly>
+                        <input id="senha" name="senha" value="{{ session['hashed_password'] }}" readonly>
                         <button type="button" class="edit-btn" onclick="habilitarEdicao('senha')">
                             <i class='bx bxs-edit'></i>
                         </button>

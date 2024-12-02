@@ -14,10 +14,11 @@ def login():
         username = request.form["usuario"]
         password = request.form["senha"]
 
-        conn = sqlite3.connect(DB_NAME)
+        conn = sqlite3.connect(DB_NAME, timeout = 10)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         user = cursor.execute("select id, password from users where username = ?", (username,)).fetchone()
+        cursor.close()
         conn.close()
 
         if user and check_password_hash(user["password"], password):
@@ -51,13 +52,14 @@ def register():
         hashed_password = generate_password_hash(password)
 
         try:
-            conn = sqlite3.connect(DB_NAME)
+            conn = sqlite3.connect(DB_NAME, timeout=10)
             cursor = conn.cursor()
             cursor.execute('''
                 INSERT INTO users (full_name, username, password, email, description, creation_date, profile_picture)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             ''', (full_name, username, hashed_password, email, description, creation_date, profile_picture))
             conn.commit()
+            cursor.close()
             conn.close()
             flash('Conta criada com sucesso!', 'sucesso')
             return redirect(url_for('auth.login'))
