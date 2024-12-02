@@ -230,6 +230,7 @@ body {
 }
 
 .hero-content {
+    display: center;
     text-align: center;
 }
 
@@ -311,4 +312,16 @@ body {
     .card-grid {
         flex-wrap: wrap;
     }
+}
+
+.flash-message-error {
+    color : red;
+}
+
+.flash-message-success {
+    color : green;
+}
+
+.flash-content {
+
 }

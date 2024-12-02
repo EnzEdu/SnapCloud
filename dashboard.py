@@ -12,5 +12,5 @@ def dashboard():
         return render_template("dashboard.html")
     
     else:
-        flash("You are not logged!")
+        flash("Você não está logado!", "erro")
         return redirect(url_for('auth.login'))

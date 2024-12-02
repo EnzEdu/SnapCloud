@@ -26,23 +26,26 @@
                 <i class='bx bx-menu'></i>
             </button>
             <ul class="menu-dropdown">
-                <li><a href="edit_profile.html">Sua conta</a></li>
-                <li><a href="#" id="logout-btn">Sair</a></li>
+                <li><a href="{{url_for('edit_profile.edit_profile')}}">Sua conta</a></li>
+                <li><a href="{{url_for('auth.logout')}}" id="logout-btn">Sair</a></li>
             </ul>
         </div>
     </nav>
     <div class="container">
         <div class="img-box">
             <i class='bx bxs-user-circle'></i>
-            <p class="created-date"><b><i>#CriadoEm: {{ data_criacao }}</i></b></p>
+            <p class="created-date"><b><i>#CriadoEm: {{user["creation_date"] }}</i></b></p>
         </div>
         <div class="form-box">
             <h1>Editar Perfil</h1>
-            <form id="form-profile" onsubmit="return salvarDados(event)">
+            {% for message in get_flashed_messages() %}
+    <p>{{ message }}</p>
+  {% endfor %}
+            <form id="form-profile" action = "/edit_profile" method = "POST"> <!-- onsubmit="return salvarDados(event)"> -->
                 <div class="input-box">
                     <label for="nome">Nome Completo:</label>
                     <div class="input-group">
-                        <input type="text" id="nome" name="nome" value="{{ user['nome'] }}" readonly>
+                        <input type="text" id="nome" name="nome" value="{{ user['full_name'] }}" readonly>
                         <button type="button" class="edit-btn" onclick="habilitarEdicao('nome')">
                             <i class='bx bxs-edit'></i>
                         </button>
@@ -51,7 +54,7 @@
                 <div class="input-box">
                     <label for="usuario">Usuário:</label>
                     <div class="input-group">
-                        <input type="text" id="usuario" name="usuario" value="{{ user['usuario'] }}" readonly>
+                        <input type="text" id="usuario" name="usuario" value="{{ user['username'] }}" readonly>
                         <button type="button" class="edit-btn" onclick="habilitarEdicao('usuario')">
                             <i class='bx bxs-edit'></i>
                         </button>
@@ -69,7 +72,7 @@
                 <div class="input-box s">
                     <label for="senha">Senha:</label>
                     <div class="input-group">
-                        <input type="password" id="senha" name="senha" value="{{ user['senha'] }}" readonly>
+                        <input id="senha" name="senha" value="{{ user['password'] }}" readonly>
                         <button type="button" class="edit-btn" onclick="habilitarEdicao('senha')">
                             <i class='bx bxs-edit'></i>
                         </button>
@@ -78,14 +81,15 @@
                 <div class="input-box">
                     <label for="descricao">Descrição:</label>
                     <div class="input-group">
-                        <textarea type="text" id="descricao" name="descricao" placeholder="Digite a sua descrição..." rows="3" readonly>{{ user['descricao'] }}</textarea>
+                        <textarea type="text" id="descricao" name="descricao" placeholder="Digite a sua descrição..." rows="3" readonly>{{ user['description'] }}</textarea>
                         <button type="button" class="edit-btn" onclick="habilitarEdicao('descricao')">
                             <i class='bx bxs-edit'></i>
                         </button>
                     </div>
                 </div>
                 <div class="button-group">
-                    <button type="button" onclick="cancelarEdicao()">Cancelar</button>
+                    <!-- <button type="button" onclick="cancelarEdicao()">Cancelar</button> -->
+                    <button type="button">Cancelar</button>
                     <button type="submit">Salvar</button>
                 </div>
             </form>
