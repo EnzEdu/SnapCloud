@@ -164,3 +164,11 @@ body {
     font-weight: bold;
     text-decoration: underline;
 }
+
+.flash-message-error {
+    color : red;
+}
+
+.flash-message-success {
+    color : green;
+}

@@ -1,6 +1,6 @@
 from flask import request, Blueprint, session, render_template, redirect, url_for, flash
 from werkzeug.utils import secure_filename
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from utilities import allowed_file
 import os
 import sqlite3
@@ -9,7 +9,7 @@ from utilities import DB_NAME
 bp = Blueprint("edit_profile", __name__)
 
 # TODO: adicionar profile_picture
-# TODO: refatorar os methods :p
+# TODO: refatorar
 @bp.route('/edit_profile', methods = ["GET", "POST"])
 def edit_profile():
     if session.get("id"):
@@ -21,23 +21,31 @@ def edit_profile():
             description = request.form["descricao"]
             # profile_picture = request.form[] # Foto de perfil foi removida do prototipo 1
 
-            conn = sqlite3.connect(DB_NAME)
+            conn = sqlite3.connect(DB_NAME, timeout = 10)
             cursor = conn.cursor()
 
+            is_the_password_the_same = password == session["hashed_password"]
+
             try:
-                if len(password) < 6:
+                # senha menor do que 6 caracteres ou inalterada
+                if len(password) < 6 or is_the_password_the_same:
                     sql = "UPDATE users SET full_name = ?, username = ?, email = ?, description = ? WHERE id = ?"
                     cursor.execute(sql, (full_name, username, email, description, session.get('id')))
-                    flash("Não são permitidas senhas com menos de 6 caracteres", "erro")
-                    return redirect(url_for('dashboard.dashboard'))
+
+                    if len(password) < 6:
+                        flash("Não são permitidas senhas com menos de 6 caracteres", "erro")
+                        return redirect(url_for('dashboard.dashboard'))
                 
                 else:
                     sql = "UPDATE users SET full_name = ?, username = ?, email = ?, password = ?, description = ? WHERE id = ?"
-                    cursor.execute(sql, (full_name, username, email, generate_password_hash(password), description, session.get('id')))
+                    password = generate_password_hash(password) # hasheia a nova senha
+                    cursor.execute(sql, (full_name, username, email, password, description, session.get('id')))
                 
                 # cursor.execute("UPDATE users SET full_name = ?, username = ?, email = ?, password = ?, description = ? WHERE id = ?", (full_name, username, email, password, description, session.get('id')))
                 conn.commit()
+                cursor.close()
                 conn.close()
+                session["hashed_password"] = password # salva a nova senha ou senha inalterada na sessão
 
             except sqlite3.IntegrityError as e:
                 flash("Nome de usuario já em uso", "erro") # testando se usar o mesmo nome de usuario vai cair aqui
@@ -48,16 +56,16 @@ def edit_profile():
 
         if request.method == 'GET':
             # Recupera as informações para mostrar na página de edição
-            conn = sqlite3.connect(DB_NAME)
+            conn = sqlite3.connect(DB_NAME, timeout=10)
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
             
             user = cursor.execute("select * from users where id = ?", (session.get('id'), )).fetchone()
-            # Não pega a senha (alternativa para não mostrar a senha hasheada).  # Dict criado para passar a senha nula para a página
-            u = {"full_name" : user["full_name"], "username" : user["username"], "password" : "", "email" : user["email"], "description" : user["description"], "creation_date" : user["creation_date"]}
+            session["hashed_password"] = user["password"] # Solução improvisada para verificar se a senha mudou. Isso é passado para o edit_profile.html
+            cursor.close()
             conn.close()
 
-            return render_template('edit_profile.html', user = u)
+            return render_template('edit_profile.html', user = user)
     
     else:
         flash("Você não está logado!", "erro")

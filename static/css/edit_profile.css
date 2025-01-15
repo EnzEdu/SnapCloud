@@ -384,3 +384,11 @@ textarea.editavel:focus {
 .button-group button:hover {
     background: #7dccda;
 }
+
+.flash-message-error {
+    color : red;
+}
+
+.flash-message-success {
+    color : green;
+}

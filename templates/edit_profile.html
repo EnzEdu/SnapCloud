@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/css/edit_profile.css">
+    <link rel="stylesheet" href="/static/css/base.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/edit_profile.css') }}">
     <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'>
     <title>Editar Perfil</title>
@@ -38,9 +39,17 @@
         </div>
         <div class="form-box">
             <h1>Editar Perfil</h1>
-            {% for message in get_flashed_messages() %}
-    <p>{{ message }}</p>
-  {% endfor %}
+            <div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% for category, message in messages %}
+                {% if category == "erro" %}
+                <div class = "flash-message-error"><p>{{ message }}</p></div>
+                {% else %}
+                <div class = "flash-message-success"><p>{{ message }}</p></div>
+            {% endif %}
+          {% endfor %}
+          {% endwith %}
+            </div>
             <form id="form-profile" action = "/edit_profile" method = "POST"> <!-- onsubmit="return salvarDados(event)"> -->
                 <div class="input-box">
                     <label for="nome">Nome Completo:</label>
@@ -72,7 +81,7 @@
                 <div class="input-box s">
                     <label for="senha">Senha:</label>
                     <div class="input-group">
-                        <input id="senha" name="senha" value="{{ user['password'] }}" readonly>
+                        <input id="senha" name="senha" value="{{ session['hashed_password'] }}" readonly>
                         <button type="button" class="edit-btn" onclick="habilitarEdicao('senha')">
                             <i class='bx bxs-edit'></i>
                         </button>
