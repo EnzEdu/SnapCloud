@@ -3,7 +3,9 @@ from flask import Blueprint, flash, g, redirect, render_template, request, sessi
 from werkzeug.security import check_password_hash, generate_password_hash
 import sqlite3
 from datetime import datetime
-from utilities import DB_NAME
+import uuid
+#from utilities import DB_NAME, Usuario
+import utilities
 from edit_profile import update_profile_picture
 
 bp = Blueprint("auth", __name__)
@@ -14,7 +16,7 @@ def login():
         username = request.form["usuario"]
         password = request.form["senha"]
 
-        conn = sqlite3.connect(DB_NAME, timeout = 10)
+        conn = sqlite3.connect(utilities.DB_NAME, timeout = 10)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         user = cursor.execute("select id, password from users where username = ?", (username,)).fetchone()
@@ -33,6 +35,12 @@ def login():
 
     return render_template("login.html")
 
+
+
+
+
+
+
 @bp.route('/logout')
 def logout():
     session.clear()
@@ -49,21 +57,27 @@ def register():
         creation_date = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
         profile_picture = update_profile_picture('static/default-placeholder.jpg')
 
+        id = uuid.uuid4().hex
         hashed_password = generate_password_hash(password)
 
         try:
-            conn = sqlite3.connect(DB_NAME, timeout=10)
-            cursor = conn.cursor()
-            cursor.execute('''
-                INSERT INTO users (full_name, username, password, email, description, creation_date, profile_picture)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            ''', (full_name, username, hashed_password, email, description, creation_date, profile_picture))
-            conn.commit()
-            cursor.close()
-            conn.close()
+            user_obj = utilities.Usuario(
+                id=id, 
+                full_name=full_name,
+                username=username,
+                password=hashed_password,
+                email=email,
+                description=description,
+                creation_date=creation_date,
+                profile_picture=profile_picture
+            )
+            
+            utilities.RDS_DATABASE.session.add(user_obj)
+            utilities.RDS_DATABASE.session.commit()
             flash('Conta criada com sucesso!', 'sucesso')
             return redirect(url_for('auth.login'))
-        except sqlite3.IntegrityError:
+        except Exception as ex:
+            print(f'Erro ao carregar o banco! {str(ex)}')
             flash('Senha ou email já existem. Por favor, altere esses dados', 'erro')
 
     return render_template('register.html')
