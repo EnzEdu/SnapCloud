@@ -8,6 +8,7 @@ from utilities import DB_NAME
 from rds import RDS_DATABASE, Usuario
 #import utilities
 from edit_profile import update_profile_picture
+import pymysql
 
 bp = Blueprint("auth", __name__)
 
@@ -62,6 +63,15 @@ def register():
         hashed_password = generate_password_hash(password)
 
         try:
+
+            email_existe = RDS_DATABASE.session.query(Usuario.id).filter_by(email=email).first() is not None
+            if email_existe == True:
+                raise pymysql.IntegrityError("Email")
+            
+            senha_existe = RDS_DATABASE.session.query(Usuario.id).filter_by(password=hashed_password).first() is not None
+            if senha_existe == True:
+                raise pymysql.IntegrityError("Senha")
+
             user_obj = Usuario(
                 id=id, 
                 full_name=full_name,
@@ -78,7 +88,6 @@ def register():
             flash('Conta criada com sucesso!', 'sucesso')
             return redirect(url_for('auth.login'))
         except Exception as ex:
-            print(f'Erro ao carregar o banco! {str(ex)}')
             flash('Senha ou email já existem. Por favor, altere esses dados', 'erro')
 
     return render_template('register.html')
