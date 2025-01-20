@@ -4,8 +4,9 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import sqlite3
 from datetime import datetime
 import uuid
-#from utilities import DB_NAME, Usuario
-import utilities
+from utilities import DB_NAME
+from rds import RDS_DATABASE, Usuario
+#import utilities
 from edit_profile import update_profile_picture
 
 bp = Blueprint("auth", __name__)
@@ -16,7 +17,7 @@ def login():
         username = request.form["usuario"]
         password = request.form["senha"]
 
-        conn = sqlite3.connect(utilities.DB_NAME, timeout = 10)
+        conn = sqlite3.connect(DB_NAME, timeout = 10)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         user = cursor.execute("select id, password from users where username = ?", (username,)).fetchone()
@@ -61,7 +62,7 @@ def register():
         hashed_password = generate_password_hash(password)
 
         try:
-            user_obj = utilities.Usuario(
+            user_obj = Usuario(
                 id=id, 
                 full_name=full_name,
                 username=username,
@@ -72,8 +73,8 @@ def register():
                 profile_picture=profile_picture
             )
             
-            utilities.RDS_DATABASE.session.add(user_obj)
-            utilities.RDS_DATABASE.session.commit()
+            RDS_DATABASE.session.add(user_obj)
+            RDS_DATABASE.session.commit()
             flash('Conta criada com sucesso!', 'sucesso')
             return redirect(url_for('auth.login'))
         except Exception as ex:
