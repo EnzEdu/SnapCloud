@@ -1,16 +1,13 @@
-import functools
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
-import sqlite3
 from datetime import datetime
 import uuid
-from utilities import DB_NAME
 from rds import RDS_DATABASE, Usuario
-#import utilities
 from edit_profile import update_profile_picture
 import pymysql
 
 bp = Blueprint("auth", __name__)
+
 
 @bp.route('/login', methods = ["GET", "POST"])
 def login():
@@ -18,35 +15,27 @@ def login():
         username = request.form["usuario"]
         password = request.form["senha"]
 
-        conn = sqlite3.connect(DB_NAME, timeout = 10)
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-        user = cursor.execute("select id, password from users where username = ?", (username,)).fetchone()
-        cursor.close()
-        conn.close()
-
-        if user and check_password_hash(user["password"], password):
-            flash('Login realizado com sucesso', 'sucesso')
-            session.clear()
-            session['id'] = user["id"]
+        user = RDS_DATABASE.session.query(Usuario.id, Usuario.password).filter_by(username=username).first()
+        if user is not None:
+            if check_password_hash(user[1], password) == True:
+                flash('Login realizado com sucesso', 'sucesso')
+                session.clear()
+                session['id'] = user[0]
             
-            return redirect(url_for('dashboard.dashboard'))
-        
+                return redirect(url_for('dashboard.dashboard'))
+            else:
+                flash('Nome de usuário ou senha incorretos', 'erro')
         else:
             flash('Nome de usuário ou senha incorretos', 'erro')
 
     return render_template("login.html")
 
 
-
-
-
-
-
 @bp.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for("auth.login"))
+
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -63,14 +52,11 @@ def register():
         hashed_password = generate_password_hash(password)
 
         try:
-
             email_existe = RDS_DATABASE.session.query(Usuario.id).filter_by(email=email).first() is not None
-            if email_existe == True:
-                raise pymysql.IntegrityError("Email")
-            
             senha_existe = RDS_DATABASE.session.query(Usuario.id).filter_by(password=hashed_password).first() is not None
-            if senha_existe == True:
-                raise pymysql.IntegrityError("Senha")
+
+            if senha_existe == True or email_existe == True:
+                raise pymysql.IntegrityError("")
 
             user_obj = Usuario(
                 id=id, 
