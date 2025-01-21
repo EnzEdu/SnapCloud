@@ -16,11 +16,24 @@
             <span>Snap Cloud</span>
             <i class='bx bxs-cloud'></i>
         </div>
+        <div class="search-filter">
+            <select id="filter-select">
+                <option value="nome">Nome</option>
+                <option value="descricao">Descrição</option>
+                <option value="tags">Tags</option>
+            </select>
+        </div>
         <div class="navbar-search">
             <input type="text" placeholder="Pesquisar..." class="search-input">
             <button class="search-btn">
                 <i class='bx bx-search'></i>
             </button>
+        </div>
+        <div class="category-links">
+            <a href="#" class="category-link" data-category="Todos">Todos</a>
+            <a href="#" class="category-link" data-category="imagens">Imagens</a>
+            <a href="#" class="category-link" data-category="videos">Vídeos</a>
+            <a href="#" class="category-link" data-category="audios">Áudios</a>
         </div>
         <div class="navbar-menu">
             <button class="menu-btn">
@@ -28,14 +41,32 @@
             </button>
             <ul class="menu-dropdown">
                 <li><a href="{{url_for('edit_profile.edit_profile')}}">Sua conta</a></li>
+                <li><a href="#" id="open-upload-modal">Upload</a></li>
                 <li><a href="{{url_for('auth.logout')}}" id="logout-btn">Sair</a></li>
             </ul>
         </div>
     </nav>
+    <div id="upload-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Upload de Arquivo</h2>
+            <form id="upload-form" action="/upload" method="POST" enctype="multipart/form-data">
+                <label for="file-upload">Selecione arquivos:</label>
+                <input type="file" id="file-upload" name="files" multiple required>
+                
+                <div id="file-details"></div>
+
+                <div class="button-container">
+                    <button type="button" class="upload-btn">Cancelar</button>
+                    <button type="submit" class="upload-btn">Fazer Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <div class="container">
         <div class="img-box">
             <i class='bx bxs-user-circle'></i>
-            <p class="created-date"><b><i>#CriadoEm: {{user["creation_date"] }}</i></b></p>
+            <p class="created-date"><b><i>#CriadoEm: {{ user["creation_date"] }}</i></b></p>
         </div>
         <div class="form-box">
             <h1>Editar Perfil</h1>
@@ -50,7 +81,7 @@
           {% endfor %}
           {% endwith %}
             </div>
-            <form id="form-profile" action = "/edit_profile" method = "POST"> <!-- onsubmit="return salvarDados(event)"> -->
+            <form id="form-profile" action = "/edit_profile" method = "POST">
                 <div class="input-box">
                     <label for="nome">Nome Completo:</label>
                     <div class="input-group">

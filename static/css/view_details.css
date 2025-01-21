@@ -344,14 +344,21 @@ body {
     cursor: pointer;
 }
 
-/* Editar Perfil */
+/* Imagem */
 .container {
     display: flex;
-    width: 900px;
-    margin-top: 65px;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    width: 100%;
+    max-width: 1500px;
+    margin: 65px auto 0;
+    padding: 20px;
+    flex-wrap: wrap;
 }
 
 .img-box {
+    flex: 1;
     display: block;
     width: 50%;
     background-color: rgba(255, 255, 255, 0.5);
@@ -360,53 +367,107 @@ body {
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 0 10px rgba(0, 0, 0, .2);
     padding: 20px;
-    border-radius: 20px 0 0 20px;
+    border-radius: 10px 10px 10px 10px;
     background: transparent;
+    margin: 0px auto;
 }
 
-.img-box i {
-    font-size: 300px;
-    color: gray;
-}
-
-/* Data de criação */
-.created-date {
-    text-align: center;
-    font-size: 0.9rem;
-    font-style: italic;
-    margin-top: 290px;
-    color: black;
-}
-
-.created-date i {
-    font-size: 16px;
-    color: black;
-    font-weight: bold;
-}
-
-.form-box {
+.img-box img {
     width: 100%;
+    height: auto;
+    object-fit: cover;
+    object-position: left;
+}
+
+/* Vídeo */
+.container video {
+    flex: 1;
+    display: block;
+    width: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 2px solid rgba(255, 255, 255, .2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    padding: 20px;
+    border-radius: 10px 10px 10px 10px;
+    background: transparent;
+    margin: 0px auto;
+}
+
+.container video source {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    object-position: left;
+}
+
+/* Áudio */
+.container audio {
+    flex: 1;
+    display: block;
+    width: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 2px solid rgba(255, 255, 255, .2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    padding: 20px;
+    border-radius: 10px 10px 10px 10px;
+    background: transparent;
+    margin: 0px auto;
+}
+
+.container audio source {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    object-position: left;
+}
+
+/* Detalhes */
+.form-box {
+    flex: 2;
+    max-width: 550px;
     background-color: rgba(255, 255, 255, 0.4);
     border: 2px solid rgba(255, 255, 255, .2);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     box-shadow: 0 0 10px rgba(0, 0, 0, .2);
-    border-radius: 0 20px 20px 0;
+    border-radius: 20px 20px 20px 20px;
     background: transparent;
 }
 
 .form-box h1 {
     margin-top: 15px;
-    font-size: 36px;
+    font-size: 30px;
     text-align: center;
 }
 
 .form-box form {
-    margin: 15px 30px 25px 30px;
+    margin: 0px 30px 25px 30px;
+}
+
+.details-box {
+    font-size: 0.9rem;
+    color: black;
+}
+
+.details-box p b {
+    font-size: 16px;
+    color: black;
+    font-weight: bold;
+}
+
+.details-box p {
+    font-size: 16px;
+    color: black;
+    padding: 10px 0px 0px 0px;
 }
 
 .form-box .input-box {
-    margin-bottom: 15px;
+    margin-top: 15px;
+    margin-bottom: 5px;
 }
 
 .form-box .input-box label {
@@ -451,6 +512,25 @@ body {
     color: #7dccda;
 }
 
+.input-group select {
+    width: 100%;
+    height: 45px;
+    padding: 10px 20px 10px 15px;
+    border: 1px solid lightgrey;
+    border-radius: 30px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s ease;
+    color: gray;
+    background-color: rgba(238, 238, 238, 0.89);
+}
+
+.input-group select:focus {
+    border: 2px solid #7dccda;
+    color: black;
+    background-color: white;
+}
+
 .input-group textarea {
     width: 100%;
     height: 90%;
@@ -490,7 +570,7 @@ textarea.editavel:focus {
     display: flex;
     justify-content: space-between;
     gap: 10px;
-    margin-top: 20px;
+    margin-top: 25px;
 }
 
 .button-group button {
@@ -510,10 +590,6 @@ textarea.editavel:focus {
     background: #7dccda;
 }
 
-.flash-message-error {
-    color : red;
-}
-
-.flash-message-success {
-    color : green;
+.button-group .delete-btn:hover  {
+    background: red;
 }
