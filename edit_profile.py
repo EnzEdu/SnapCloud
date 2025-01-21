@@ -34,7 +34,7 @@ def edit_profile():
                     # senha menor do que 6 caracteres ou inalterada
                     if len(password) < 6 or is_the_password_the_same:
                         
-                        result = RDS_DATABASE.session.query(Usuario).filter_by(username=username)
+                        result = RDS_DATABASE.session.query(Usuario).filter_by(username=username).first()
                         if result is not None:
                             raise pymysql.err.IntegrityError("")
                         
