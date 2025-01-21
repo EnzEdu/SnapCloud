@@ -1,3 +1,4 @@
+import uuid
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
@@ -5,9 +6,14 @@ import uuid
 from rds import RDS_DATABASE, Usuario
 from edit_profile import update_profile_picture
 import pymysql
+from s3 import s3
+import boto3
 
 bp = Blueprint("auth", __name__)
 
+@bp.route('/', methods=["GET"])
+def main_page():
+    return redirect(url_for("auth.login"))
 
 @bp.route('/login', methods = ["GET", "POST"])
 def login():
@@ -40,18 +46,27 @@ def logout():
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
+        bucket_name = "snapcloud-bucket-1"
+
+
+
         full_name = request.form['nome']
         username = request.form['usuario']
         password = request.form['senha']
         email = request.form['email']
         description = ""
         creation_date = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
-        profile_picture = update_profile_picture('static/default-placeholder.jpg')
+        profile_picture = ""
+        uploaded_file = request.files['filename']
+        
 
         id = uuid.uuid4().hex
         hashed_password = generate_password_hash(password)
+        new_filename = uuid.uuid4().hex + '.' + uploaded_file.filename.rsplit('.', 1)[1].lower()
 
         try:
+            s3.Bucket(bucket_name).upload_fileobj(uploaded_file, new_filename)
+
             email_existe = RDS_DATABASE.session.query(Usuario.id).filter_by(email=email).first() is not None
             senha_existe = RDS_DATABASE.session.query(Usuario.id).filter_by(password=hashed_password).first() is not None
 

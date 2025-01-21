@@ -35,6 +35,11 @@
           {% endwith %}
             </div>
             <form action="/register" method = "POST" enctype = "multipart/form-data" onsubmit="return validarFormulario(event)">
+
+                <div class="input-box-s">
+                    <input type="file" id="filename" name="filename" required>
+                </div>
+
                 <div class="input-box">
                     <label for="nome">Nome Completo:</label>
                     <input type="text" id="nome" name="nome" required>
