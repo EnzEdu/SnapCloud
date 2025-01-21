@@ -1,10 +1,7 @@
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS files (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    full_name TEXT NOT NULL,
-    username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    description TEXT,
-    creation_date TEXT NOT NULL,
-    profile_picture TEXT
+    id_user TEXT NOT NULL,
+    s3_bucket_nome TEXT NOT NULL,
+    s3_bucket_regiao TEXT NOT NULL,
+    file_name TEXT NOT NULL
 )

@@ -4,6 +4,7 @@ import auth
 import dashboard
 import edit_profile
 from utilities import UPLOAD_FOLDER
+from s3 import SQLITE_DATABASE
 
 DB_NAME = 'snapcloud.sqlite'
 
@@ -15,5 +16,5 @@ def create_app():
     app.register_blueprint(auth.bp)
     app.register_blueprint(dashboard.bp)
     app.register_blueprint(edit_profile.bp)
-    
+
     return app
