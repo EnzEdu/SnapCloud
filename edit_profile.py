@@ -65,7 +65,7 @@ def edit_profile():
                             RDS_DATABASE.session.query(Usuario).filter_by(id=session.get("id")).update({
                                 "full_name": full_name,
                                 "email": email,
-                                "password": password,
+                                "password": hashed_password,
                                 "description": description
                             })
                         else:
