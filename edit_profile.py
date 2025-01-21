@@ -14,57 +14,64 @@ bp = Blueprint("edit_profile", __name__)
 def edit_profile():
     if session.get("id"):
         if request.method == 'POST':
-            full_name = request.form["nome"]
-            username = request.form["usuario"]
-            password = request.form["senha"]
-            email = request.form["email"]
-            description = request.form["descricao"]
-            # profile_picture = request.form[] # Foto de perfil foi removida do prototipo 1
 
-            is_the_password_the_same = (password == session["hashed_password"])
+            action = request.form.get("action")
 
-            try:
-                # senha menor do que 6 caracteres ou inalterada
-                if len(password) < 6 or is_the_password_the_same:
-                    
-                    result = RDS_DATABASE.session.query(Usuario).filter_by(username=username)
-                    if result is not None:
-                        raise pymysql.err.IntegrityError("")
-                    
-                    RDS_DATABASE.session.query(Usuario).filter_by(id=session.get("id")).update({
-                        "full_name" : full_name,
-                        "username": username,
-                        "email": email,
-                        "description": description
-                    })
-
-                    RDS_DATABASE.session.commit()
-
-                    if len(password) < 6:
-                        flash("Não são permitidas senhas com menos de 6 caracteres", "erro")
-                        return redirect(url_for('dashboard.dashboard'))
-                
-                else:
-                    hashed_password = generate_password_hash(password) # hasheia a nova senha
-
-                    RDS_DATABASE.session.query(Usuario).filter_by(id=session.get("id")).update({
-                        "full_name" : full_name,
-                        "username": username,
-                        "email": email,
-                        "password": hashed_password,
-                        "description": description
-                    })
-                    RDS_DATABASE.session.commit()
-
-                session["hashed_password"] = password # salva a nova senha ou senha inalterada na sessão
-
-            except Exception as ex:
-                if isinstance(ex, pymysql.err.IntegrityError):
-                    flash("Nome de usuario já em uso", "erro") # testando se usar o mesmo nome de usuario vai cair aqui
+            if (action == "cancelar"):
                 return redirect(url_for('dashboard.dashboard'))
 
-            flash("Dados válidos atualizados com sucesso", "sucesso")
-            return redirect(url_for('dashboard.dashboard'))
+            elif (action == "salvar"):
+                full_name = request.form["nome"]
+                username = request.form["usuario"]
+                password = request.form["senha"]
+                email = request.form["email"]
+                description = request.form["descricao"]
+                # profile_picture = request.form[] # Foto de perfil foi removida do prototipo 1
+
+                is_the_password_the_same = (password == session["hashed_password"])
+
+                try:
+                    # senha menor do que 6 caracteres ou inalterada
+                    if len(password) < 6 or is_the_password_the_same:
+                        
+                        result = RDS_DATABASE.session.query(Usuario).filter_by(username=username)
+                        if result is not None:
+                            raise pymysql.err.IntegrityError("")
+                        
+                        RDS_DATABASE.session.query(Usuario).filter_by(id=session.get("id")).update({
+                            "full_name" : full_name,
+                            "username": username,
+                            "email": email,
+                            "description": description
+                        })
+
+                        RDS_DATABASE.session.commit()
+
+                        if len(password) < 6:
+                            flash("Não são permitidas senhas com menos de 6 caracteres", "erro")
+                            return redirect(url_for('dashboard.dashboard'))
+                    
+                    else:
+                        hashed_password = generate_password_hash(password) # hasheia a nova senha
+
+                        RDS_DATABASE.session.query(Usuario).filter_by(id=session.get("id")).update({
+                            "full_name" : full_name,
+                            "username": username,
+                            "email": email,
+                            "password": hashed_password,
+                            "description": description
+                        })
+                        RDS_DATABASE.session.commit()
+
+                    session["hashed_password"] = password # salva a nova senha ou senha inalterada na sessão
+
+                except Exception as ex:
+                    if isinstance(ex, pymysql.err.IntegrityError):
+                        flash("Nome de usuario já em uso", "erro") # testando se usar o mesmo nome de usuario vai cair aqui
+                    return redirect(url_for('dashboard.dashboard'))
+
+                flash("Dados válidos atualizados com sucesso", "sucesso")
+                return redirect(url_for('dashboard.dashboard'))
 
         if request.method == 'GET':
             # Recupera as informações para mostrar na página de edição
