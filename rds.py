@@ -10,5 +10,5 @@ class Usuario(RDS_DATABASE.Model):
     password = RDS_DATABASE.Column(RDS_DATABASE.String(300))
     email = RDS_DATABASE.Column(RDS_DATABASE.String(100))
     description = RDS_DATABASE.Column(RDS_DATABASE.String(256))
-    creation_date = RDS_DATABASE.Column(RDS_DATABASE.Time(True))
+    creation_date = RDS_DATABASE.Column(RDS_DATABASE.String(100))
     profile_picture = RDS_DATABASE.Column(RDS_DATABASE.String(100))

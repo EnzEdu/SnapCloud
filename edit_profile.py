@@ -33,45 +33,64 @@ def edit_profile():
                 try:
                     # senha menor do que 6 caracteres ou inalterada
                     if len(password) < 6 or is_the_password_the_same:
-                        
+
+                        # Checa se o nome de usuário existe
                         result = RDS_DATABASE.session.query(Usuario).filter_by(username=username).first()
                         if result is not None:
-                            raise pymysql.err.IntegrityError("")
-                        
-                        RDS_DATABASE.session.query(Usuario).filter_by(id=session.get("id")).update({
-                            "full_name" : full_name,
-                            "username": username,
-                            "email": email,
-                            "description": description
-                        })
+                            RDS_DATABASE.session.query(Usuario).filter_by(id=session.get("id")).update({
+                                "full_name": full_name,
+                                "email": email,
+                                "description": description
+                            })
+                        else:
+                            RDS_DATABASE.session.query(Usuario).filter_by(id=session.get("id")).update({
+                                "full_name" : full_name,
+                                "username": username,
+                                "email": email,
+                                "description": description
+                            })
 
                         RDS_DATABASE.session.commit()
 
                         if len(password) < 6:
                             flash("Não são permitidas senhas com menos de 6 caracteres", "erro")
                             return redirect(url_for('dashboard.dashboard'))
-                    
+
                     else:
                         hashed_password = generate_password_hash(password) # hasheia a nova senha
 
-                        RDS_DATABASE.session.query(Usuario).filter_by(id=session.get("id")).update({
-                            "full_name" : full_name,
-                            "username": username,
-                            "email": email,
-                            "password": hashed_password,
-                            "description": description
-                        })
+                        # Checa se o nome de usuário existe
+                        result = RDS_DATABASE.session.query(Usuario).filter_by(username=username).first()
+                        if result is not None:
+                            RDS_DATABASE.session.query(Usuario).filter_by(id=session.get("id")).update({
+                                "full_name": full_name,
+                                "email": email,
+                                "password": password,
+                                "description": description
+                            })
+                        else:
+                            RDS_DATABASE.session.query(Usuario).filter_by(id=session.get("id")).update({
+                                "full_name" : full_name,
+                                "username": username,
+                                "email": email,
+                                "password": hashed_password,
+                                "description": description
+                            })
+
                         RDS_DATABASE.session.commit()
 
-                    session["hashed_password"] = password # salva a nova senha ou senha inalterada na sessão
+                    session["hashed_password"] = password # salva a nova senha ou senha inalterada na >
 
                 except Exception as ex:
                     if isinstance(ex, pymysql.err.IntegrityError):
-                        flash("Nome de usuario já em uso", "erro") # testando se usar o mesmo nome de usuario vai cair aqui
+                        flash("Nome de usuario já em uso", "erro") # testando se usar o mesmo nome de >
+                    else:
+                        flash("Ocorreu um erro", "erro")
                     return redirect(url_for('dashboard.dashboard'))
 
                 flash("Dados válidos atualizados com sucesso", "sucesso")
                 return redirect(url_for('dashboard.dashboard'))
+
 
         if request.method == 'GET':
             # Recupera as informações para mostrar na página de edição
