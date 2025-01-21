@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/css/dashboard.css">
     <link rel="stylesheet" href="/static/css/base.css">
-    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'>
     <title>Snap Cloud</title>
 </head>
@@ -16,11 +16,24 @@
             <span>Snap Cloud</span>
             <i class='bx bxs-cloud'></i>
         </div>
+        <div class="search-filter">
+            <select id="filter-select">
+                <option value="nome">Nome</option>
+                <option value="descricao">Descrição</option>
+                <option value="tags">Tags</option>
+            </select>
+        </div>
         <div class="navbar-search">
             <input type="text" placeholder="Pesquisar..." class="search-input">
             <button class="search-btn">
                 <i class='bx bx-search'></i>
             </button>
+        </div>
+        <div class="category-links">
+            <a href="#" class="category-link" data-category="Todos">Todos</a>
+            <a href="#" class="category-link" data-category="imagens">Imagens</a>
+            <a href="#" class="category-link" data-category="videos">Vídeos</a>
+            <a href="#" class="category-link" data-category="audios">Áudios</a>
         </div>
         <div class="navbar-menu">
             <button class="menu-btn">
@@ -28,66 +41,67 @@
             </button>
             <ul class="menu-dropdown">
                 <li><a href="{{url_for('edit_profile.edit_profile')}}">Sua conta</a></li>
+                <li><a href="#" id="open-upload-modal">Upload</a></li>
                 <li><a href="{{url_for('auth.logout')}}" id="logout-btn">Sair</a></li>
             </ul>
         </div>
     </nav>
-    <div class="hero-banner">
-        <div class="hero-content">
-            <h1>Bem-vindo ao Snap Cloud</h1>
-            <div>
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                {% for category, message in messages %}
-                {% if category == "erro" %}
-                <div class = "flash-message-error"><p>{{ message }}</p></div>
-                {% else %}
-                <div class = "flash-message-success"><p>{{ message }}</p></div>
-            {% endif %}
-          {% endfor %}
-          {% endwith %}
-            </div>
-            <p>Armazene e compartilhe seus arquivos de forma rápida e segura!</p>
+    <div id="upload-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Upload de Arquivo</h2>
+            <form id="upload-form" action="/upload" method="POST" enctype="multipart/form-data">
+                <label for="file-upload">Selecione arquivos:</label>
+                <input type="file" id="file-upload" name="files" multiple required>
+                
+                <div id="file-details"></div>
+
+                <div class="button-container">
+                    <button type="button" class="upload-btn">Cancelar</button>
+                    <button type="submit" class="upload-btn">Fazer Upload</button>
+                </div>
+            </form>
         </div>
     </div>
-
     <div class="content">
-        <section class="dashboard-section">
-            <h2>Seus Arquivos Recentes</h2>
+        <section class="dashboard-section" id="imagens-section">
+            <h2>Seus Arquivos de Imagens</h2>
             <div class="card-grid">
-                <div class="card">
-                    <i class='bx bx-image'></i>
-                    <span>Imagens</span>
-                </div>
-                <div class="card">
-                    <i class='bx bx-video'></i>
-                    <span>Vídeos</span>
-                </div>
+                {% for imagem in imagens %}
+                    <a href="/view_details/{{ image.id }}" class="card">
+                        <img src="{{ url_for('nome_da_rota', **args) }}"/>
+                        <span>{{ image.nome }}</span>
+                        <span>#{{ image.tags }}</span>
+                    </a>
+                {% endfor %}
             </div>
         </section>
-
-        <section class="dashboard-section">
-            <h2>Pré-visualização de Mídias</h2>
+    </div>
+    <div class="content">
+        <section class="dashboard-section" id="videos-section">
+            <h2>Seus Arquivos de Vídeos</h2>
             <div class="card-grid">
-                <div class="card">
-                    <i class='bx bx-video'></i>
-                    <span>Vídeos</span>
-                </div>
-                <div class="card">
-                    <i class='bx bx-image'></i>
-                    <span>Imagens</span>
-                </div>
-                <div class="card">
-                    <i class='bx bx-video'></i>
-                    <span>Vídeos</span>
-                </div>
-                <div class="card">
-                    <i class='bx bx-image'></i>
-                    <span>Imagens</span>
-                </div>
-                <div class="card">
-                    <i class='bx bx-video'></i>
-                    <span>Vídeos</span>
-                </div>
+                {% for video in videos %}
+                    <a href="/view_details/{{ video.id }}" class="card">
+                        <img src="{{ url_for('nome_da_rota', **args) }}"/>
+                        <span>{{ video.nome }}</span>
+                        <span>#{{ video.tags }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+    <div class="content">
+        <section class="dashboard-section" id="audios-section">
+            <h2>Seus Arquivos de Áudios</h2>
+            <div class="card-grid">
+                {% for audio in audios %}
+                    <a href="/view_details/{{ audio.id }}" class="card">
+                        <i class='bx bx-music'></i>
+                        <span>{{ audio.nome }}</span>
+                        <span>#{{ audio.tags }}</span>
+                    </a>
+                {% endfor %}
             </div>
         </section>
     </div>
