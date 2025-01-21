@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/view_details.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/view_details.css') }}">
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'>
+    <title>Visualizar Detalhes</title>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class='bx bxs-cloud'></i>
+            <span>Snap Cloud</span>
+            <i class='bx bxs-cloud'></i>
+        </div>
+        <div class="search-filter">
+            <select id="filter-select">
+                <option value="nome">Nome</option>
+                <option value="descricao">Descrição</option>
+                <option value="tags">Tags</option>
+            </select>
+        </div>
+        <div class="navbar-search">
+            <input type="text" placeholder="Pesquisar..." class="search-input">
+            <button class="search-btn">
+                <i class='bx bx-search'></i>
+            </button>
+        </div>
+        <div class="category-links">
+            <a href="#" class="category-link" data-category="Todos">Todos</a>
+            <a href="#" class="category-link" data-category="imagens">Imagens</a>
+            <a href="#" class="category-link" data-category="videos">Vídeos</a>
+            <a href="#" class="category-link" data-category="audios">Áudios</a>
+        </div>
+        <div class="navbar-menu">
+            <button class="menu-btn">
+                <i class='bx bx-menu'></i>
+            </button>
+            <ul class="menu-dropdown">
+                <li><a href="edit_profile.html">Sua conta</a></li>
+                <li><a href="#" id="open-upload-modal">Upload</a></li>
+                <li><a href="#">Sair</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div id="upload-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Upload de Arquivo</h2>
+            <form id="upload-form" action="/upload" method="POST" enctype="multipart/form-data">
+                <label for="file-upload">Selecione arquivos:</label>
+                <input type="file" id="file-upload" name="files" multiple required>
+                
+                <div id="file-details"></div>
+
+                <div class="button-container">
+                    <button type="button" class="upload-btn">Cancelar</button>
+                    <button type="submit" class="upload-btn">Fazer Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% if image %}
+        <div class="container">
+            <div class="img-box">
+                <img src="{{ url_for('get_image', image_id=image.id) }}"/>
+            </div>
+            <div class="form-box">
+                <h1>Detalhes da Imagem</h1>
+                <form id="form-profile" onsubmit="return salvarDados(event)">
+                    <div class="details-box">
+                        <p><b>Tamanho do Arquivo:</b> {{ image['tamanho'] }} bytes</p>
+                        <p><b>Data de Upload:</b> {{ image['data_upload'] | date("d/m/Y") }}</p>
+                        <p><b>Tipo MIME:</b> {{ image['mime_type'] }}</p>
+                        <p><b>Dimensões:</b> {{ image['largura'] }}x{{ image['altura'] }} pixels</p>
+                        <p><b>Profundidade de Cor:</b> {{ image['profundidade_cor'] }} bits</p>
+                        <p><b>Resolução:</b> {{ image['resolucao'] }} DPI</p>
+                        <p><b>Dados Exif:</b> {{ image['exif'] }}</p>
+                    </div>
+                    <div class="input-box">
+                        <label for="nome">Nome do Arquivo:</label>
+                        <div class="input-group">
+                            <input type="text" id="nome" name="nome" value="{{ image['nome'] }}" readonly>
+                            <button type="button" class="edit-btn" onclick="habilitarEdicao('nome')">
+                                <i class='bx bxs-edit'></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="input-box">
+                        <label for="tags">Tags:</label>
+                        <div class="input-group">
+                            <input type="text" id="tags" name="tags" value="{{ image['tags'] }}" readonly>
+                            <button type="button" class="edit-btn" onclick="habilitarEdicao('tags')">
+                                <i class='bx bxs-edit'></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="input-box">
+                        <label for="descricao">Descrição:</label>
+                        <div class="input-group">
+                            <textarea type="text" id="descricao" name="descricao" placeholder="Digite a sua descrição de imagem..." rows="3" readonly>{{ image['descricao'] }}</textarea>
+                            <button type="button" class="edit-btn" onclick="habilitarEdicao('descricao')">
+                                <i class='bx bxs-edit'></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button type="button" onclick="cancelarEdicao()">Cancelar</button>
+                        <button type="submit">Salvar</button>
+                        <button type="button" class="delete-btn" onclick="excluirImagem()">Excluir</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% elif video %}
+        <div class="container">
+            <video controls>
+                <source src="{{ url_for('get_video', video_id=video.id) }}">
+            </video>
+            <div class="form-box">
+                <h1>Detalhes do Vídeo</h1>
+                <form id="form-profile" onsubmit="return salvarDados(event)">
+                    <div class="details-box">
+                        <p><b>Tamanho do Arquivo:</b> {{ video['tamanho'] }} bytes</p>
+                        <p><b>Data de Upload:</b> {{ video['data_upload'] | date("d/m/Y") }}</p>
+                        <p><b>Tipo MIME:</b> {{ video['mime_type'] }}</p>
+                        <p><b>Duração:</b> {{ video['duracao'] }}</p>
+                        <p><b>Resolução:</b> {{ video['largura'] }}x{{ video['altura'] }} pixels</p>
+                        <p><b>Taxa de Quadros:</b> {{ video['taxa_quadros'] }}</p>
+                        <p><b>Codec de vídeo:</b> {{ video['codec_video'] }}</p>
+                        <p><b>Codec de áudio:</b> {{ video['codec_audio'] }}</p>
+                        <p><b>Taxa de Bits:</b> {{ video['taxa_bits'] }} bits</p>
+                        <p><b>Qualidade Geradas:</b> {{ video['qualidade_geradas'] }}</p>
+                    </div>
+                    <div class="input-box">
+                        <label for="nome">Nome do Arquivo:</label>
+                        <div class="input-group">
+                            <input type="text" id="nome" name="nome" value="{{ video['nome'] }}" readonly>
+                            <button type="button" class="edit-btn" onclick="habilitarEdicao('nome')">
+                                <i class='bx bxs-edit'></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="input-box">
+                        <label for="tags">Tags:</label>
+                        <div class="input-group">
+                            <input type="text" id="tags" name="tags" value="{{ video['tags'] }}" readonly>
+                            <button type="button" class="edit-btn" onclick="habilitarEdicao('tags')">
+                                <i class='bx bxs-edit'></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="input-box">
+                        <label for="genero">Gênero:</label>
+                        <div class="input-group">
+                            <select id="genero" name="genero">
+                                <option value="nao_aplicavel" {{ 'selected' if video['genero'] == 'nao_aplicavel' else '' }}>Não Aplicável</option>
+                                <option value="natureza" {{ 'selected' if video['genero'] == 'natureza' else '' }}>Natureza</option>
+                                <option value="tecnologia" {{ 'selected' if video['genero'] == 'tecnologia' else '' }}>Tecnologia</option>
+                                <option value="musica" {{ 'selected' if video['genero'] == 'musica' else '' }}>Música</option>
+                                <option value="arte" {{ 'selected' if video['genero'] == 'arte' else '' }}>Arte</option>
+                                <option value="filme" {{ 'selected' if video['genero'] == 'filme' else '' }}>Filme</option>
+                                <option value="educacional" {{ 'selected' if video['genero'] == 'educacional' else '' }}>Educacional</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-box">
+                        <label for="descricao">Descrição:</label>
+                        <div class="input-group">
+                            <textarea type="text" id="descricao" name="descricao" placeholder="Digite a sua descrição de vídeo..." rows="3" readonly>{{ video['descricao'] }}</textarea>
+                            <button type="button" class="edit-btn" onclick="habilitarEdicao('descricao')">
+                                <i class='bx bxs-edit'></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button type="button" onclick="cancelarEdicao()">Cancelar</button>
+                        <button type="submit">Salvar</button>
+                        <button type="button" class="delete-btn" onclick="excluirImagem()">Excluir</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% elif audio %}
+        <div class="container">
+            <div class="img-box">
+                <audio controls>
+                    <source src="{{ url_for('get_audio', audio_id=audio.id) }}">
+                </audio>
+            </div>
+            <div class="form-box">
+                <h1>Detalhes do Áudio</h1>
+                <form id="form-profile" onsubmit="return salvarDados(event)">
+                    <div class="details-box">
+                        <p><b>Tamanho do Arquivo:</b> {{ audio['tamanho'] }} bytes</p>
+                        <p><b>Data de Upload:</b> {{ audio['data_upload'] | date("d/m/Y") }}</p>
+                        <p><b>Tipo MIME:</b> {{ audio['mime_type'] }}</p>
+                        <p><b>Duração:</b> {{ audio['duracao'] }}</p>
+                        <p><b>Taxa de Bits:</b> {{ audio['taxa_bits'] }} bits</p>
+                        <p><b>Taxa de Amostragem:</b> {{ audio['taxa_amostragem'] }} bits</p>
+                        <p><b>Canal:</b> {{ audio['canal'] }}</p>
+                    </div>
+                    <div class="input-box">
+                        <label for="nome">Nome do Arquivo:</label>
+                        <div class="input-group">
+                            <input type="text" id="nome" name="nome" value="{{ audio['nome'] }}" readonly>
+                            <button type="button" class="edit-btn" onclick="habilitarEdicao('nome')">
+                                <i class='bx bxs-edit'></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="input-box">
+                        <label for="tags">Tags:</label>
+                        <div class="input-group">
+                            <input type="text" id="tags" name="tags" value="{{ audio['tags'] }}" readonly>
+                            <button type="button" class="edit-btn" onclick="habilitarEdicao('tags')">
+                                <i class='bx bxs-edit'></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="input-box">
+                        <label for="genero">Gênero:</label>
+                        <div class="input-group">
+                            <select id="genero" name="genero">
+                                <option value="nao_aplicavel" {{ 'selected' if audio['genero'] == 'nao_aplicavel' else '' }}>Não Aplicável</option>
+                                <option value="natureza" {{ 'selected' if audio['genero'] == 'natureza' else '' }}>Natureza</option>
+                                <option value="tecnologia" {{ 'selected' if audio['genero'] == 'tecnologia' else '' }}>Tecnologia</option>
+                                <option value="musica" {{ 'selected' if audio['genero'] == 'musica' else '' }}>Música</option>
+                                <option value="arte" {{ 'selected' if audio['genero'] == 'arte' else '' }}>Arte</option>
+                                <option value="filme" {{ 'selected' if audio['genero'] == 'filme' else '' }}>Filme</option>
+                                <option value="educacional" {{ 'selected' if audio['genero'] == 'educacional' else '' }}>Educacional</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-box">
+                        <label for="descricao">Descrição:</label>
+                        <div class="input-group">
+                            <textarea type="text" id="descricao" name="descricao" placeholder="Digite a sua descrição de vídeo..." rows="3" readonly>{{ audio['descricao'] }}</textarea>
+                            <button type="button" class="edit-btn" onclick="habilitarEdicao('descricao')">
+                                <i class='bx bxs-edit'></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button type="button">Cancelar</button>
+                        <button type="submit">Salvar</button>
+                        <button type="button" class="delete-btn">Excluir</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <p>Nenhum arquivo encontrado.</p>
+    {% endif %}
+    <script src="/static/js/view_details.js"></script>
+</body>
+</html>

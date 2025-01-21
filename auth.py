@@ -1,11 +1,11 @@
 import uuid
-import functools
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
-import sqlite3
 from datetime import datetime
-from utilities import DB_NAME
+import uuid
+from rds import RDS_DATABASE, Usuario
 from edit_profile import update_profile_picture
+import pymysql
 from s3 import s3
 import boto3
 
@@ -21,41 +21,31 @@ def login():
         username = request.form["usuario"]
         password = request.form["senha"]
 
-        conn = sqlite3.connect(DB_NAME, timeout = 10)
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-        user = cursor.execute("select id, password from users where username = ?", (username,)).fetchone()
-        cursor.close()
-        conn.close()
-
-        if user and check_password_hash(user["password"], password):
-            flash('Login realizado com sucesso', 'sucesso')
-            session.clear()
-            session['id'] = user["id"]
+        user = RDS_DATABASE.session.query(Usuario.id, Usuario.password).filter_by(username=username).first()
+        if user is not None:
+            if check_password_hash(user[1], password) == True:
+                flash('Login realizado com sucesso', 'sucesso')
+                session.clear()
+                session['id'] = user[0]
             
-            return redirect(url_for('dashboard.dashboard'))
-        
+                return redirect(url_for('dashboard.dashboard'))
+            else:
+                flash('Nome de usuário ou senha incorretos', 'erro')
         else:
             flash('Nome de usuário ou senha incorretos', 'erro')
 
     return render_template("login.html")
+
 
 @bp.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for("auth.login"))
 
+
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        teste = 0
-
-
-        print("Form: ", request.form)
-        print("File: ", request.files['filename'])
-        uploaded_file = request.files['filename']
-
-        new_filename = uuid.uuid4().hex + '.' + uploaded_file.filename.rsplit('.', 1)[1].lower()
         bucket_name = "snapcloud-bucket-1"
 
 
@@ -66,22 +56,39 @@ def register():
         email = request.form['email']
         description = ""
         creation_date = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
-        profile_picture = request.files['filename']
+        profile_picture = ""
+        uploaded_file = request.files['filename']
+        
 
+        id = uuid.uuid4().hex
         hashed_password = generate_password_hash(password)
+        new_filename = uuid.uuid4().hex + '.' + uploaded_file.filename.rsplit('.', 1)[1].lower()
 
         try:
-            #conn = sqlite3.connect(DB_NAME, timeout=10)
-            #cursor = conn.cursor()
-            #cursor.execute('''INSERT INTO users (full_name, username, password, email, description, creation_date, profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?)''', (full_name, username, hashed_password, email, description, creation_date, profile_picture))
-            #conn.commit()
-            #cursor.close()
-            #conn.close()
-            
             s3.Bucket(bucket_name).upload_fileobj(uploaded_file, new_filename)
-            flash('Arquivo salvo com sucesso!', 'sucesso')
+
+            email_existe = RDS_DATABASE.session.query(Usuario.id).filter_by(email=email).first() is not None
+            senha_existe = RDS_DATABASE.session.query(Usuario.id).filter_by(password=hashed_password).first() is not None
+
+            if senha_existe == True or email_existe == True:
+                raise pymysql.IntegrityError("")
+
+            user_obj = Usuario(
+                id=id, 
+                full_name=full_name,
+                username=username,
+                password=hashed_password,
+                email=email,
+                description=description,
+                creation_date=creation_date,
+                profile_picture=profile_picture
+            )
+            
+            RDS_DATABASE.session.add(user_obj)
+            RDS_DATABASE.session.commit()
+            flash('Conta criada com sucesso!', 'sucesso')
             return redirect(url_for('auth.login'))
-        except sqlite3.IntegrityError:
+        except Exception as ex:
             flash('Senha ou email já existem. Por favor, altere esses dados', 'erro')
 
     return render_template('register.html')
