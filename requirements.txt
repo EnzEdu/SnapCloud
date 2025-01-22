@@ -1,2 +1,4 @@
 flask
 waitress
+cv2
+ffmpeg-python
