@@ -65,7 +65,11 @@
     </div>
     <div class="container">
         <div class="img-box">
+            {% if pfp is string %}
+            <img src="{{ pfp }}">
+            {% else %}
             <img src="https://{{ pfp.s3_bucket_nome }}.s3.{{ pfp.s3_bucket_regiao }}.amazonaws.com/{{ pfp.bucket_file_name }}">
+            {% endif %}
             <p class="created-date"><b><i>#CriadoEm: {{ user["creation_date"] }}</i></b></p>
         </div>
         <div class="form-box">

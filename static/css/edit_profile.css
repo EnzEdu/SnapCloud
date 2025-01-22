@@ -369,6 +369,12 @@ body {
     color: gray;
 }
 
+.img-box img {
+    width: 235px;
+    height: 229px;
+    object-fit: cover; /* Ensures the image fits the dimensions without distortion */
+}
+
 /* Data de criação */
 .created-date {
     text-align: center;
