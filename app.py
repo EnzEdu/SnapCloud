@@ -9,11 +9,9 @@ from rds import RDS_DATABASE
 
 DB_USUARIO = os.getenv("RDS_USUARIO")
 DB_SENHA = os.getenv("RDS_SENHA")
-RDS_INSTANCIA_ENDPOINT = "database-gabs.cz8e20is81b8.sa-east-1.rds.amazonaws.com"
-RDS_INSTANCIA_NOME = "gabs_db"
+RDS_INSTANCIA_ENDPOINT = "snapcloud-database-1.cz8e20is81b8.sa-east-1.rds.amazonaws.com"
+RDS_INSTANCIA_NOME = "snap1"
 SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{DB_USUARIO}:{DB_SENHA}@{RDS_INSTANCIA_ENDPOINT}/{RDS_INSTANCIA_NOME}'
-
-
 
 def create_app():
     app = Flask(__name__)
