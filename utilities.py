@@ -6,15 +6,12 @@ from mutagen import File
 
 
 UPLOAD_FOLDER = 'static/uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'}
-ALLOWED_AUDIO_EXTENSIONS = {'mp3', 'wav', 'ogg', 'flac'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'mp3', 'wav', 'ogg', 'flac', 'mp4', 'avi', 'mov', 'webm'}
 DB_NAME = "snapcloud.db"
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def allowed_audio_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_AUDIO_EXTENSIONS
 
 def get_mime_type(extension):
   media_types = {
@@ -27,7 +24,11 @@ def get_mime_type(extension):
       "mp3": "audio/mp3",
       "wav": "audio/wav",
       "ogg": "audio/ogg",
-      "flac": "audio/flac"
+      "flac": "audio/flac",
+      "mp4" : "video/mp4",
+      "avi": "video/avi",
+      "mov": "video/mov",
+      "webm": "video/webm"
   }
   return media_types.get(extension.lower())
 

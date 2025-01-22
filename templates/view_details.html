@@ -69,15 +69,15 @@
             </div>
             <div class="form-box">
                 <h1>Detalhes da Imagem</h1>
-                <form id="form-profile" onsubmit="return salvarDados(event)">
+                <form id="form-profile" action ="/upload/image" method = "POST" enctype="multipart/form-data" onsubmit="return salvarDados(event)">
                     <div class="details-box">
-                        <p><b>Tamanho do Arquivo:</b> {{ image['tamanho'] }} bytes</p>
-                        <p><b>Data de Upload:</b> {{ image['data_upload'] | date("d/m/Y") }}</p>
+                        <p><b>Tamanho do Arquivo:</b> {{ image['file_size'] }} bytes</p>
+                        <p><b>Data de Upload:</b> {{ image['upload_date'] | date("d/m/Y") }}</p>
                         <p><b>Tipo MIME:</b> {{ image['mime_type'] }}</p>
-                        <p><b>Dimensões:</b> {{ image['largura'] }}x{{ image['altura'] }} pixels</p>
-                        <p><b>Profundidade de Cor:</b> {{ image['profundidade_cor'] }} bits</p>
-                        <p><b>Resolução:</b> {{ image['resolucao'] }} DPI</p>
-                        <p><b>Dados Exif:</b> {{ image['exif'] }}</p>
+                        <p><b>Dimensões:</b> {{ image['width'] }}x{{ image['height'] }} pixels</p>
+                        <p><b>Profundidade de Cor:</b> {{ image['color_depth'] }} bits</p>
+                        <p><b>Resolução:</b> {{ image['resoltion'] }} DPI</p>
+                        <p><b>Dados Exif:</b> {{ image['exif_data'] }}</p>
                     </div>
                     <div class="input-box">
                         <label for="nome">Nome do Arquivo:</label>
@@ -121,7 +121,7 @@
             </video>
             <div class="form-box">
                 <h1>Detalhes do Vídeo</h1>
-                <form id="form-profile" onsubmit="return salvarDados(event)">
+                <form id="form-profile" action ="/upload/video" method = "POST" enctype="multipart/form-data" onsubmit="return salvarDados(event)">
                     <div class="details-box">
                         <p><b>Tamanho do Arquivo:</b> {{ video['tamanho'] }} bytes</p>
                         <p><b>Data de Upload:</b> {{ video['data_upload'] | date("d/m/Y") }}</p>
@@ -192,15 +192,15 @@
             </div>
             <div class="form-box">
                 <h1>Detalhes do Áudio</h1>
-                <form id="form-profile" onsubmit="return salvarDados(event)">
+                <form id="form-profile" action ="/upload/audio" method = "POST" enctype="multipart/form-data" onsubmit="return salvarDados(event)">
                     <div class="details-box">
-                        <p><b>Tamanho do Arquivo:</b> {{ audio['tamanho'] }} bytes</p>
-                        <p><b>Data de Upload:</b> {{ audio['data_upload'] | date("d/m/Y") }}</p>
+                        <p><b>Tamanho do Arquivo:</b> {{ audio['file_size'] }} bytes</p>
+                        <p><b>Data de Upload:</b> {{ audio['upload_date'] | date("d/m/Y") }}</p>
                         <p><b>Tipo MIME:</b> {{ audio['mime_type'] }}</p>
-                        <p><b>Duração:</b> {{ audio['duracao'] }}</p>
-                        <p><b>Taxa de Bits:</b> {{ audio['taxa_bits'] }} bits</p>
-                        <p><b>Taxa de Amostragem:</b> {{ audio['taxa_amostragem'] }} bits</p>
-                        <p><b>Canal:</b> {{ audio['canal'] }}</p>
+                        <p><b>Duração:</b> {{ audio['length'] }}</p>
+                        <p><b>Taxa de Bits:</b> {{ audio['bit_rate'] }} bits</p>
+                        <p><b>Taxa de Amostragem:</b> {{ audio['sampling_rate'] }} bits</p>
+                        <p><b>Canal:</b> {{ audio['num_channels'] }}</p>
                     </div>
                     <div class="input-box">
                         <label for="nome">Nome do Arquivo:</label>
