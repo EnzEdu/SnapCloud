@@ -60,7 +60,7 @@ def register():
 
         hashed_password = generate_password_hash(password)
 
-        if len(request.files) != 0:
+        if len(request.files['filename'].filename) != 0:
             uploaded_file = request.files['filename']
             novo_filename = username + "/profile" + "." + uploaded_file.content_type.split("/", 1)[1].lower()
             fileimage = Image.open(uploaded_file)
@@ -96,7 +96,7 @@ def register():
                 raise pymysql.IntegrityError("")
 
 
-            if len(request.files) != 0:
+            if len(request.files['filename'].filename) != 0:
                 img_obj = Imagem(
                     s3_bucket_nome=S3_BUCKET_NAME,
                     s3_bucket_regiao=S3_BUCKET_REGION,

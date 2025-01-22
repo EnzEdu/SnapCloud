@@ -32,7 +32,7 @@ def edit_profile():
                 email = request.form["email"]
                 description = request.form["descricao"]
 
-                if len(request.files) != 0:
+                if len(request.files['filename'].filename) != 0:
                     uploaded_file = request.files['filename']
                     fileimage = Image.open(uploaded_file)
 
@@ -100,7 +100,7 @@ def edit_profile():
 
                         RDS_DATABASE.session.commit()
 
-                    if len(request.files) != 0:
+                    if len(request.files['filename'].filename) != 0:
                         usuario = RDS_DATABASE.session.query(Usuario).filter_by(id=session.get("id")).first()
 
                         procura_profile = s3_client.list_objects_v2(Bucket=S3_BUCKET_NAME, Prefix=username + "/")
@@ -109,35 +109,37 @@ def edit_profile():
 
                             if profile_antigo:
                                 nome_profile_antigo = profile_antigo[0]
-                                print("old_pfp: ", nome_profile_antigo)
                                 s3.Object(S3_BUCKET_NAME, nome_profile_antigo).delete()
-                                s3.Bucket(S3_BUCKET_NAME).upload_fileobj(uploaded_file, novo_filename)
 
-                                img_obj = Imagem(
-                                    s3_bucket_nome=S3_BUCKET_NAME,
-                                    s3_bucket_regiao=S3_BUCKET_REGION,
-                                    file_name=uploaded_file.filename,
-                                    file_size=file_size,
-                                    bucket_file_name=novo_filename,
-                                    upload_date=datetime.now().strftime('%d-%m-%Y %H:%M:%S'),
-                                    mime_type=uploaded_file.content_type,
-                                    width=fileimage.width,
-                                    height=fileimage.height,
-                                    color_depth=fileimage.mode,
-                                    resolution_dpi_x=dpi[0],
-                                    resolution_dpi_y=dpi[1],
-                                    exif_data=exif_data,
-                                    description=description,
-                                    tags=tags
-                                )
+                        s3.Bucket(S3_BUCKET_NAME).upload_fileobj(uploaded_file, novo_filename)
 
-                                RDS_DATABASE.session.add(img_obj)
-                                id_profile_picture = RDS_DATABASE.session.query(Imagem.id).filter_by(bucket_file_name=novo_filename).first()
-                                id_profile_picture = id_profile_picture[0]
+                        img_obj = Imagem(
+                            s3_bucket_nome=S3_BUCKET_NAME,
+                            s3_bucket_regiao=S3_BUCKET_REGION,
+                            file_name=uploaded_file.filename,
+                            file_size=file_size,
+                            bucket_file_name=novo_filename,
+                            upload_date=datetime.now().strftime('%d-%m-%Y %H:%M:%S'),
+                            mime_type=uploaded_file.content_type,
+                            width=fileimage.width,
+                            height=fileimage.height,
+                            color_depth=fileimage.mode,
+                            resolution_dpi_x=dpi[0],
+                            resolution_dpi_y=dpi[1],
+                            exif_data=exif_data,
+                            description=description,
+                            tags=tags
+                        )
 
-                                RDS_DATABASE.session.query(Usuario).filter_by(id=session.get("id")).update({
-                                    "id_profile_picture": id_profile_picture
-                                })
+                        RDS_DATABASE.session.add(img_obj)
+                        RDS_DATABASE.session.commit()
+
+                        id_profile_picture = RDS_DATABASE.session.query(Imagem.id).filter_by(bucket_file_name=novo_filename).first()
+                        id_profile_picture = id_profile_picture[0]
+
+                        RDS_DATABASE.session.query(Usuario).filter_by(id=session.get("id")).update({
+                            "id_profile_picture": id_profile_picture
+                        })
 
                         RDS_DATABASE.session.commit()
 
@@ -162,7 +164,10 @@ def edit_profile():
 
             if user is not None:
                 session["hashed_password"] = user.password
-                return render_template("edit_profile.html", user=user, pfp=pfp)
+                if (pfp is not None):
+                    return render_template("edit_profile.html", user=user, pfp=pfp)
+                else:
+                    return render_template("edit_profile.html", user=user, pfp="static/img/lets-icons--user-box-duotone.png")
             else:
                 flash("Você não está logado!", "erro")
                 return redirect(url_for('auth.login'))
