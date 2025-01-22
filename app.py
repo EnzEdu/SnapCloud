@@ -5,10 +5,7 @@ import auth
 import dashboard
 import edit_profile
 import upload_audio
-from utilities import UPLOAD_FOLDER
 from rds import RDS_DATABASE
-
-DB_NAME = 'snapcloud.sqlite'
 
 DB_USUARIO = os.getenv("RDS_USUARIO")
 DB_SENHA = os.getenv("RDS_SENHA")
@@ -32,7 +29,7 @@ def create_app():
     try:
         with app.app_context():
             print('Carrega as tabelas do banco')
-            if drop_data_base: 
+            if drop_data_base:
                 RDS_DATABASE.drop_all()
                 RDS_DATABASE.create_all()
                 RDS_DATABASE.session.commit()

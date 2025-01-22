@@ -4,9 +4,9 @@ from werkzeug.utils import secure_filename
 import os
 from mutagen import File
 
-
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'mp3', 'wav', 'ogg', 'flac', 'mp4', 'avi', 'mov', 'webm'}
+
 DB_NAME = "snapcloud.db"
 
 def allowed_file(filename):
@@ -64,7 +64,3 @@ def extract_audio_info(file_path):
     
     except Exception as e:
         return {"error": str(e)}
-
-def create_folders():
-    if not os.path.exists(UPLOAD_FOLDER):
-        os.makedirs(UPLOAD_FOLDER)
