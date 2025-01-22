@@ -98,6 +98,7 @@ def register():
 
             if len(request.files['filename'].filename) != 0:
                 img_obj = Imagem(
+                    id_usuario=-1,
                     s3_bucket_nome=S3_BUCKET_NAME,
                     s3_bucket_regiao=S3_BUCKET_REGION,
                     file_name=file_name,

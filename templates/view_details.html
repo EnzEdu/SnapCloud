@@ -62,27 +62,27 @@
             </form>
         </div>
     </div>
-    {% if image %}
+    {% if imagem %}
         <div class="container">
             <div class="img-box">
-                <img src="{{ url_for('get_image', image_id=image.id) }}"/>
+                <img src="https://{{ imagem.s3_bucket_nome }}.s3.{{ imagem.s3_bucket_regiao }}.amazonaws.com/{{ username }}/imagens/{{ imagem.file_name }}"/>
             </div>
             <div class="form-box">
                 <h1>Detalhes da Imagem</h1>
-                <form id="form-profile" onsubmit="return salvarDados(event)">
+                <form id="form-profile" method="POST">
                     <div class="details-box">
-                        <p><b>Tamanho do Arquivo:</b> {{ image['tamanho'] }} bytes</p>
-                        <p><b>Data de Upload:</b> {{ image['data_upload'] | date("d/m/Y") }}</p>
-                        <p><b>Tipo MIME:</b> {{ image['mime_type'] }}</p>
-                        <p><b>Dimensões:</b> {{ image['largura'] }}x{{ image['altura'] }} pixels</p>
-                        <p><b>Profundidade de Cor:</b> {{ image['profundidade_cor'] }} bits</p>
-                        <p><b>Resolução:</b> {{ image['resolucao'] }} DPI</p>
-                        <p><b>Dados Exif:</b> {{ image['exif'] }}</p>
+                        <p><b>Tamanho do Arquivo:</b> {{ imagem['file_size'] }} bytes</p>
+                        <p><b>Data de Upload:</b> {{ imagem['upload_date'] }}</p>
+                        <p><b>Tipo MIME:</b> {{ imagem['mime_type'] }}</p>
+                        <p><b>Dimensões:</b> {{ imagem['width'] }}x{{ imagem['height'] }} pixels</p>
+                        <p><b>Profundidade de Cor:</b> {{ imagem['color_depth'] }} bits</p>
+                        <p><b>Resolução:</b> {{ imagem['resolution'] }} DPI</p>
+                        <p><b>Dados Exif:</b> {{ imagem['exif_data'] }}</p>
                     </div>
                     <div class="input-box">
                         <label for="nome">Nome do Arquivo:</label>
                         <div class="input-group">
-                            <input type="text" id="nome" name="nome" value="{{ image['nome'] }}" readonly>
+                            <input type="text" id="nome" name="nome" value="{{ imagem['file_name'] }}" readonly>
                             <button type="button" class="edit-btn" onclick="habilitarEdicao('nome')">
                                 <i class='bx bxs-edit'></i>
                             </button>
@@ -91,7 +91,7 @@
                     <div class="input-box">
                         <label for="tags">Tags:</label>
                         <div class="input-group">
-                            <input type="text" id="tags" name="tags" value="{{ image['tags'] }}" readonly>
+                            <input type="text" id="tags" name="tags" value="{{ imagem['tags'] }}" readonly>
                             <button type="button" class="edit-btn" onclick="habilitarEdicao('tags')">
                                 <i class='bx bxs-edit'></i>
                             </button>
@@ -100,16 +100,16 @@
                     <div class="input-box">
                         <label for="descricao">Descrição:</label>
                         <div class="input-group">
-                            <textarea type="text" id="descricao" name="descricao" placeholder="Digite a sua descrição de imagem..." rows="3" readonly>{{ image['descricao'] }}</textarea>
+                            <textarea type="text" id="descricao" name="descricao" placeholder="Digite a sua descrição de imagem..." rows="3" readonly>{{ imagem['description'] }}</textarea>
                             <button type="button" class="edit-btn" onclick="habilitarEdicao('descricao')">
                                 <i class='bx bxs-edit'></i>
                             </button>
                         </div>
                     </div>
                     <div class="button-group">
-                        <button type="button" onclick="cancelarEdicao()">Cancelar</button>
-                        <button type="submit">Salvar</button>
-                        <button type="button" class="delete-btn" onclick="excluirImagem()">Excluir</button>
+                        <button type="submit" name="action" value="cancelar" onclick="cancelarEdicao()">Cancelar</button>
+                        <button type="submit" name="action" value="salvar" >Salvar</button>
+                        <button type="submit" name="action" value="excluir" class="delete-btn" onclick="excluirImagem()">Excluir</button>
                     </div>
                 </form>
             </div>

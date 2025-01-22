@@ -114,6 +114,7 @@ def edit_profile():
                         s3.Bucket(S3_BUCKET_NAME).upload_fileobj(uploaded_file, novo_filename)
 
                         img_obj = Imagem(
+                            id_usuario=-1,
                             s3_bucket_nome=S3_BUCKET_NAME,
                             s3_bucket_regiao=S3_BUCKET_REGION,
                             file_name=uploaded_file.filename,

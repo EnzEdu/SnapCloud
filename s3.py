@@ -9,6 +9,7 @@ s3_client = boto3.client("s3")
 
 class Imagem(RDS_DATABASE.Model):
     id = RDS_DATABASE.Column(RDS_DATABASE.Integer, primary_key=True)
+    id_usuario = RDS_DATABASE.Column(RDS_DATABASE.Integer)
     s3_bucket_nome = RDS_DATABASE.Column(RDS_DATABASE.String(100))
     s3_bucket_regiao = RDS_DATABASE.Column(RDS_DATABASE.String(100))
     file_name = RDS_DATABASE.Column(RDS_DATABASE.String(100))

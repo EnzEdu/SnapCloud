@@ -5,8 +5,7 @@ from PIL import Image
 from utilities import allowed_file, DB_NAME
 import piexif
 from datetime import datetime
-from rds import Imagem
-from s3 import S3_BUCKET_NAME, S3_BUCKET_REGION
+from s3 import S3_BUCKET_NAME, S3_BUCKET_REGION, Imagem
 
 def upload_image(obj, args):
     file = obj
@@ -40,6 +39,7 @@ def upload_image(obj, args):
 
 
         img_obj = Imagem(
+            id_usuario=user_id,
             s3_bucket_nome=S3_BUCKET_NAME,
             s3_bucket_regiao=S3_BUCKET_REGION,
             file_name=file_name,
@@ -59,7 +59,7 @@ def upload_image(obj, args):
         #thumbnail_filename = f"thumb_{filename}"
         #image = Image.open(file)
         #image.thumbnail((100, 100))
-        
+
         return (True, img_obj)
 
     else:

@@ -68,10 +68,10 @@
             <h2>Seus Arquivos de Imagens</h2>
             <div class="card-grid">
                 {% for imagem in imagens %}
-                    <a href="/view_details/{{ image.id }}" class="card">
-                        <img src="{{ url_for('nome_da_rota', **args) }}"/>
-                        <span>{{ image.nome }}</span>
-                        <span>#{{ image.tags }}</span>
+                    <a href="/view_details/{{ imagem.id }}?type=imagem" class="card">
+                        <img src="https://{{ imagem.s3_bucket_nome }}.s3.{{ imagem.s3_bucket_regiao }}.amazonaws.com/{{ user.username }}/imagens/{{ imagem.bucket_file_name }}"/>
+                        <span>{{ imagem.file_name }}</span>
+                        <span>#{{ imagem.tags }}</span>
                     </a>
                 {% endfor %}
             </div>
@@ -96,7 +96,7 @@
             <h2>Seus Arquivos de Áudios</h2>
             <div class="card-grid">
                 {% for audio in audios %}
-                    <a href="/view_details/{{ audio.id }}" class="card">
+                    <a href="/view_details/{{ audio.id }}?type=audio" class="card">
                         <img src="static/img/audio_waveform.jpg"/>
                         <span>{{ audio.file_name }}</span>
                         <span>#{{ audio.tags }}</span>
