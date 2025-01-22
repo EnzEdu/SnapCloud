@@ -16,19 +16,21 @@
             <span>Snap Cloud</span>
             <i class='bx bxs-cloud'></i>
         </div>
-        <div class="search-filter">
-            <select id="filter-select">
-                <option value="nome">Nome</option>
-                <option value="descricao">Descrição</option>
-                <option value="tags">Tags</option>
-            </select>
-        </div>
-        <div class="navbar-search">
-            <input type="text" placeholder="Pesquisar..." class="search-input">
-            <button class="search-btn">
-                <i class='bx bx-search'></i>
-            </button>
-        </div>
+        <form method="POST" class="category-links">
+            <div class="search-filter">
+                <select id="filter-select" name="filter">
+                    <option value="nome">Nome</option>
+                    <option value="descricao">Descrição</option>
+                    <option value="tags">Tags</option>
+                </select>
+            </div>
+            <div class="navbar-search">
+                <input type="text" placeholder="Pesquisar..." class="search-input" name="query">
+                <button class="search-btn">
+                    <i class='bx bx-search'></i>
+                </button>
+            </div>
+        </form>    
         <div class="category-links">
             <a href="#" class="category-link" data-category="Todos">Todos</a>
             <a href="#" class="category-link" data-category="imagens">Imagens</a>
@@ -78,20 +80,6 @@
         </section>
     </div>
     <div class="content">
-        <section class="dashboard-section" id="videos-section">
-            <h2>Seus Arquivos de Vídeos</h2>
-            <div class="card-grid">
-                {% for video in videos %}
-                    <a href="/view_details/{{ video.id }}" class="card">
-                        <img src="{{ url_for('nome_da_rota', **args) }}"/>
-                        <span>{{ video.nome }}</span>
-                        <span>#{{ video.tags }}</span>
-                    </a>
-                {% endfor %}
-            </div>
-        </section>
-    </div>
-    <div class="content">
         <section class="dashboard-section" id="audios-section">
             <h2>Seus Arquivos de Áudios</h2>
             <div class="card-grid">
@@ -100,6 +88,20 @@
                         <img src="static/img/audio_waveform.jpg"/>
                         <span>{{ audio.file_name }}</span>
                         <span>#{{ audio.tags }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+    <div class="content">
+        <section class="dashboard-section" id="videos-section">
+            <h2>Seus Arquivos de Vídeos</h2>
+            <div class="card-grid">
+                {% for video in videos %}
+                    <a href="/view_details/{{ video.id }}" class="card">
+                        <img src="{{ url_for('nome_da_rota', **args) }}"/>
+                        <span>{{ video.nome }}</span>
+                        <span>#{{ video.tags }}</span>
                     </a>
                 {% endfor %}
             </div>
