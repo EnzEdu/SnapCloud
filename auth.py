@@ -9,6 +9,9 @@ from edit_profile import update_profile_picture
 import pymysql
 from s3 import s3, S3_BUCKET_NAME, S3_BUCKET_REGION, Imagem
 import boto3
+from PIL import Image
+import io
+import piexif
 
 bp = Blueprint("auth", __name__)
 
@@ -59,19 +62,29 @@ def register():
 
         if len(request.files) != 0:
             uploaded_file = request.files['filename']
-            novo_filename = uuid.uuid4().hex + "." + uploaded_file.filename.rsplit(".", 1)[1].lower()
+            novo_filename = username + "/profile" + "." + uploaded_file.content_type.split("/", 1)[1].lower()
+            fileimage = Image.open(uploaded_file)
+            dpi = fileimage.info.get('dpi', ('Unknown', 'Unknown'))
 
             file_name = uploaded_file.filename
             file_size = uploaded_file.seek(0, os.SEEK_END)
             uploaded_file.seek(0, os.SEEK_SET)
             bucket_file_name = novo_filename
             upload_date = creation_date
-            mime_type = ""
-            width = 0
-            height = 0
-            color_depth = 0
-            resolution = 0
+            mime_type = request.files['filename'].content_type
+            width = fileimage.width
+            height = fileimage.height
+            color_depth = fileimage.mode
+            resolution_dpi_x = dpi[0]
+            resolution_dpi_y = dpi[1]
+
             exif_data = ""
+            try:
+                exif_dict = piexif.load(fileimage.info['exif'])
+                exif_data = {piexif.TAGS[key]: exif_dict['0th'].get(key, 'N/A') for key in exif_dict['0th']}
+            except:
+                exif_data = ""
+
             description = ""
             tags = ""
 
@@ -95,7 +108,8 @@ def register():
                     width=width,
                     height=height,
                     color_depth=color_depth,
-                    resolution=resolution,
+                    resolution_dpi_x=resolution_dpi_x,
+                    resolution_dpi_y=resolution_dpi_y,
                     exif_data=exif_data,
                     description=description,
                     tags=tags
