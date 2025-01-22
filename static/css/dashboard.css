@@ -398,6 +398,12 @@ body {
     margin-bottom: 10px;
 }
 
+.card img {
+    width: 70px;
+    height: 70px;
+    object-fit:cover;
+}
+
 .card:hover {
     background: lightgrey;
     transform: scale(1.05);

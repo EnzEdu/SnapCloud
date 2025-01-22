@@ -4,7 +4,8 @@ from flask import Flask
 import auth
 import dashboard
 import edit_profile
-import upload_audio
+import upload
+import view_details
 from rds import RDS_DATABASE
 
 DB_USUARIO = os.getenv("RDS_USUARIO")
@@ -12,6 +13,8 @@ DB_SENHA = os.getenv("RDS_SENHA")
 RDS_INSTANCIA_ENDPOINT = "snapcloud-database-1.cz8e20is81b8.sa-east-1.rds.amazonaws.com"
 RDS_INSTANCIA_NOME = "snap1"
 SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{DB_USUARIO}:{DB_SENHA}@{RDS_INSTANCIA_ENDPOINT}/{RDS_INSTANCIA_NOME}'
+
+
 
 def create_app():
     app = Flask(__name__)
@@ -21,7 +24,8 @@ def create_app():
     app.register_blueprint(auth.bp)
     app.register_blueprint(dashboard.bp)
     app.register_blueprint(edit_profile.bp)
-    app.register_blueprint(upload_audio.bp)
+    app.register_blueprint(upload.bp)
+    app.register_blueprint(view_details.bp)
 
     drop_data_base = True
     RDS_DATABASE.init_app(app)

@@ -52,7 +52,7 @@
             <form id="upload-form" action="/upload" method="POST" enctype="multipart/form-data">
                 <label for="file-upload">Selecione arquivos:</label>
                 <input type="file" id="file-upload" name="files" multiple required>
-                
+
                 <div id="file-details"></div>
 
                 <div class="button-container">
@@ -69,15 +69,15 @@
             </div>
             <div class="form-box">
                 <h1>Detalhes da Imagem</h1>
-                <form id="form-profile" action ="/upload/image" method = "POST" enctype="multipart/form-data" onsubmit="return salvarDados(event)">
+                <form id="form-profile" onsubmit="return salvarDados(event)">
                     <div class="details-box">
-                        <p><b>Tamanho do Arquivo:</b> {{ image['file_size'] }} bytes</p>
-                        <p><b>Data de Upload:</b> {{ image['upload_date'] | date("d/m/Y") }}</p>
+                        <p><b>Tamanho do Arquivo:</b> {{ image['tamanho'] }} bytes</p>
+                        <p><b>Data de Upload:</b> {{ image['data_upload'] | date("d/m/Y") }}</p>
                         <p><b>Tipo MIME:</b> {{ image['mime_type'] }}</p>
-                        <p><b>Dimensões:</b> {{ image['width'] }}x{{ image['height'] }} pixels</p>
-                        <p><b>Profundidade de Cor:</b> {{ image['color_depth'] }} bits</p>
-                        <p><b>Resolução:</b> {{ image['resoltion'] }} DPI</p>
-                        <p><b>Dados Exif:</b> {{ image['exif_data'] }}</p>
+                        <p><b>Dimensões:</b> {{ image['largura'] }}x{{ image['altura'] }} pixels</p>
+                        <p><b>Profundidade de Cor:</b> {{ image['profundidade_cor'] }} bits</p>
+                        <p><b>Resolução:</b> {{ image['resolucao'] }} DPI</p>
+                        <p><b>Dados Exif:</b> {{ image['exif'] }}</p>
                     </div>
                     <div class="input-box">
                         <label for="nome">Nome do Arquivo:</label>
@@ -121,7 +121,7 @@
             </video>
             <div class="form-box">
                 <h1>Detalhes do Vídeo</h1>
-                <form id="form-profile" action ="/upload/video" method = "POST" enctype="multipart/form-data" onsubmit="return salvarDados(event)">
+                <form id="form-profile" onsubmit="return salvarDados(event)">
                     <div class="details-box">
                         <p><b>Tamanho do Arquivo:</b> {{ video['tamanho'] }} bytes</p>
                         <p><b>Data de Upload:</b> {{ video['data_upload'] | date("d/m/Y") }}</p>
@@ -187,25 +187,25 @@
         <div class="container">
             <div class="img-box">
                 <audio controls>
-                    <source src="{{ url_for('get_audio', audio_id=audio.id) }}">
+                    <source src="https://{{ audio.s3_bucket_nome }}.s3.{{ audio.s3_bucket_regiao }}.amazonaws.com/{{ username }}/audios/{{ audio.file_name }}">
                 </audio>
             </div>
             <div class="form-box">
                 <h1>Detalhes do Áudio</h1>
-                <form id="form-profile" action ="/upload/audio" method = "POST" enctype="multipart/form-data" onsubmit="return salvarDados(event)">
+                <form id="form-profile" method="POST">
                     <div class="details-box">
                         <p><b>Tamanho do Arquivo:</b> {{ audio['file_size'] }} bytes</p>
-                        <p><b>Data de Upload:</b> {{ audio['upload_date'] | date("d/m/Y") }}</p>
+                        <p><b>Data de Upload:</b> {{ audio['upload_date'] }}</p>
                         <p><b>Tipo MIME:</b> {{ audio['mime_type'] }}</p>
-                        <p><b>Duração:</b> {{ audio['length'] }}</p>
-                        <p><b>Taxa de Bits:</b> {{ audio['bit_rate'] }} bits</p>
-                        <p><b>Taxa de Amostragem:</b> {{ audio['sampling_rate'] }} bits</p>
-                        <p><b>Canal:</b> {{ audio['num_channels'] }}</p>
+                        <p><b>Duração:</b> {{ audio['duration'] }} segundos</p>
+                        <p><b>Taxa de Bits:</b> {{ audio['bitrate'] }} bits</p>
+                        <p><b>Taxa de Amostragem:</b> {{ audio['sample_rate'] }} bits</p>
+                        <p><b>Canal:</b> {{ audio['channels'] }} canais</p>
                     </div>
                     <div class="input-box">
                         <label for="nome">Nome do Arquivo:</label>
                         <div class="input-group">
-                            <input type="text" id="nome" name="nome" value="{{ audio['nome'] }}" readonly>
+                            <input type="text" id="nome" name="nome" value="{{ audio['file_name'] }}" readonly>
                             <button type="button" class="edit-btn" onclick="habilitarEdicao('nome')">
                                 <i class='bx bxs-edit'></i>
                             </button>
@@ -224,29 +224,29 @@
                         <label for="genero">Gênero:</label>
                         <div class="input-group">
                             <select id="genero" name="genero">
-                                <option value="nao_aplicavel" {{ 'selected' if audio['genero'] == 'nao_aplicavel' else '' }}>Não Aplicável</option>
-                                <option value="natureza" {{ 'selected' if audio['genero'] == 'natureza' else '' }}>Natureza</option>
-                                <option value="tecnologia" {{ 'selected' if audio['genero'] == 'tecnologia' else '' }}>Tecnologia</option>
-                                <option value="musica" {{ 'selected' if audio['genero'] == 'musica' else '' }}>Música</option>
-                                <option value="arte" {{ 'selected' if audio['genero'] == 'arte' else '' }}>Arte</option>
-                                <option value="filme" {{ 'selected' if audio['genero'] == 'filme' else '' }}>Filme</option>
-                                <option value="educacional" {{ 'selected' if audio['genero'] == 'educacional' else '' }}>Educacional</option>
+                                <option value="nao_aplicavel" {{ 'selected' if audio['genres'] == 'nao_aplicavel' else '' }}>Não Aplicável</option>
+                                <option value="natureza" {{ 'selected' if audio['genres'] == 'natureza' else '' }}>Natureza</option>
+                                <option value="tecnologia" {{ 'selected' if audio['genres'] == 'tecnologia' else '' }}>Tecnologia</option>
+                                <option value="musica" {{ 'selected' if audio['genres'] == 'musica' else '' }}>Música</option>
+                                <option value="arte" {{ 'selected' if audio['genres'] == 'arte' else '' }}>Arte</option>
+                                <option value="filme" {{ 'selected' if audio['genres'] == 'filme' else '' }}>Filme</option>
+                                <option value="educacional" {{ 'selected' if audio['genres'] == 'educacional' else '' }}>Educacional</option>
                             </select>
                         </div>
                     </div>
                     <div class="input-box">
                         <label for="descricao">Descrição:</label>
                         <div class="input-group">
-                            <textarea type="text" id="descricao" name="descricao" placeholder="Digite a sua descrição de vídeo..." rows="3" readonly>{{ audio['descricao'] }}</textarea>
+                            <textarea type="text" id="descricao" name="descricao" placeholder="Digite a sua descrição de vídeo..." rows="3" readonly>{{ audio['description'] }}</textarea>
                             <button type="button" class="edit-btn" onclick="habilitarEdicao('descricao')">
                                 <i class='bx bxs-edit'></i>
                             </button>
                         </div>
                     </div>
                     <div class="button-group">
-                        <button type="button">Cancelar</button>
-                        <button type="submit">Salvar</button>
-                        <button type="button" class="delete-btn">Excluir</button>
+                        <button type="submit" name="action" value="cancelar">Cancelar</button>
+                        <button type="submit" name="action" value="salvar">Salvar</button>
+                        <button type="submit" name="action" value="excluir" class="delete-btn">Excluir</button>
                     </div>
                 </form>
             </div>

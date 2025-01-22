@@ -53,7 +53,7 @@
             <form id="upload-form" action="/upload" method="POST" enctype="multipart/form-data">
                 <label for="file-upload">Selecione arquivos:</label>
                 <input type="file" id="file-upload" name="files" multiple required>
-                
+
                 <div id="file-details"></div>
 
                 <div class="button-container">
@@ -97,8 +97,8 @@
             <div class="card-grid">
                 {% for audio in audios %}
                     <a href="/view_details/{{ audio.id }}" class="card">
-                        <i class='bx bx-music'></i>
-                        <span>{{ audio.nome }}</span>
+                        <img src="static/img/audio_waveform.jpg"/>
+                        <span>{{ audio.file_name }}</span>
                         <span>#{{ audio.tags }}</span>
                     </a>
                 {% endfor %}
