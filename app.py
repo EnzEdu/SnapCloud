@@ -4,6 +4,8 @@ from flask import Flask
 import auth
 import dashboard
 import edit_profile
+import upload_audio
+from utilities import UPLOAD_FOLDER
 from rds import RDS_DATABASE
 
 DB_NAME = 'snapcloud.sqlite'
@@ -24,6 +26,7 @@ def create_app():
     app.register_blueprint(auth.bp)
     app.register_blueprint(dashboard.bp)
     app.register_blueprint(edit_profile.bp)
+    app.register_blueprint(upload_audio.bp)
 
     drop_data_base = True
     RDS_DATABASE.init_app(app)
