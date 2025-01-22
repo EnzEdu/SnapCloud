@@ -8,10 +8,9 @@ from rds import RDS_DATABASE, Usuario
 from edit_profile import update_profile_picture
 import pymysql
 from s3 import s3, S3_BUCKET_NAME, S3_BUCKET_REGION, Imagem
-import boto3
 from PIL import Image
-import io
 import piexif
+from utilities import allowed_file
 
 bp = Blueprint("auth", __name__)
 
@@ -61,7 +60,14 @@ def register():
         hashed_password = generate_password_hash(password)
 
         if len(request.files['filename'].filename) != 0:
-            uploaded_file = request.files['filename']
+            try:
+                uploaded_file = request.files['filename']
+                if uploaded_file and allowed_file(uploaded_file.filename) == False:
+                    raise TypeError("")
+            except Exception as ex:
+                flash("Erro de extensao!", "erro")
+                return redirect(url_for("auth.login"))
+
             novo_filename = username + "/profile" + "." + uploaded_file.content_type.split("/", 1)[1].lower()
             fileimage = Image.open(uploaded_file)
             dpi = fileimage.info.get('dpi', ('Unknown', 'Unknown'))

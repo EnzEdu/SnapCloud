@@ -33,7 +33,13 @@ def edit_profile():
                 description = request.form["descricao"]
 
                 if len(request.files['filename'].filename) != 0:
-                    uploaded_file = request.files['filename']
+                    try:
+                        uploaded_file = request.files['filename']
+                        if uploaded_file and allowed_file(uploaded_file.filename) == False:
+                            raise TypeError("")
+                    except Exception as ex:
+                        flash("Erro de extensao!", "erro")
+                        return redirect(url_for("dashboard.dashboard"))
                     fileimage = Image.open(uploaded_file)
 
                     file_size = uploaded_file.seek(0, os.SEEK_END)
@@ -176,13 +182,3 @@ def edit_profile():
     else:
         flash("Você não está logado!", "erro")
         return redirect(url_for('auth.login'))
-
-
-def update_profile_picture(profile_picture):
-    if 'profile_picture' in request.files:
-        file = request.files['profile_picture']
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            profile_picture = os.path.join('static/uploads', filename)
-            file.save(profile_picture)
-    return profile_picture
