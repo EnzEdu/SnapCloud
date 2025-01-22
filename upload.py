@@ -7,6 +7,7 @@ import piexif
 import uuid
 import os
 from upload_audio import upload_audio
+from upload_image import upload_image
 
 bp = Blueprint("upload", __name__)
 
@@ -36,6 +37,10 @@ def upload():
                 if (file_type == "audio"):
                     result = upload_audio(fileobj, args)
                     folder = "audios"
+
+                elif (file_type == "image"):
+                    result = upload_image(fileobj, args)
+                    folder = "imagens"
 
                 else:
                     flash("Arquivo desconhecido", "erro")
