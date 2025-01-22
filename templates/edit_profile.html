@@ -53,7 +53,7 @@
             <form id="upload-form" action="/upload" method="POST" enctype="multipart/form-data">
                 <label for="file-upload">Selecione arquivos:</label>
                 <input type="file" id="file-upload" name="files" multiple required>
-                
+
                 <div id="file-details"></div>
 
                 <div class="button-container">
@@ -65,7 +65,7 @@
     </div>
     <div class="container">
         <div class="img-box">
-            <i class='bx bxs-user-circle'></i>
+            <img src="https://{{ pfp.s3_bucket_nome }}.s3.{{ pfp.s3_bucket_regiao }}.amazonaws.com/{{ pfp.bucket_file_name }}">
             <p class="created-date"><b><i>#CriadoEm: {{ user["creation_date"] }}</i></b></p>
         </div>
         <div class="form-box">
@@ -81,7 +81,12 @@
           {% endfor %}
           {% endwith %}
             </div>
-            <form id="form-profile" action = "/edit_profile" method = "POST">
+            <form id="form-profile" action = "/edit_profile" method = "POST" enctype="multipart/form-data">
+
+                <div class="input-box-s">
+                    <input type="file" id="filename" name="filename">
+                </div>
+
                 <div class="input-box">
                     <label for="nome">Nome Completo:</label>
                     <div class="input-group">

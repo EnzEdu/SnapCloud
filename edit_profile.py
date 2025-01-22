@@ -4,7 +4,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from utilities import allowed_file
 import os
 from rds import RDS_DATABASE, Usuario
+from s3 import Imagem, S3_BUCKET_NAME, s3
 import pymysql
+import uuid
+from datetime import datetime
 
 bp = Blueprint("edit_profile", __name__)
 
@@ -14,7 +17,6 @@ bp = Blueprint("edit_profile", __name__)
 def edit_profile():
     if session.get("id"):
         if request.method == 'POST':
-
             action = request.form.get("action")
 
             if (action == "cancelar"):
@@ -26,7 +28,12 @@ def edit_profile():
                 password = request.form["senha"]
                 email = request.form["email"]
                 description = request.form["descricao"]
-                # profile_picture = request.form[] # Foto de perfil foi removida do prototipo 1
+
+                if len(request.files) != 0:
+                    uploaded_file = request.files['filename']
+                    file_size = uploaded_file.seek(0, os.SEEK_END)
+                    uploaded_file.seek(0, os.SEEK_SET)
+                    hashed_filename = uuid.uuid4().hex + "." + uploaded_file.filename.rsplit(".", 1)[1].lower()
 
                 is_the_password_the_same = (password == session["hashed_password"])
 
@@ -79,6 +86,19 @@ def edit_profile():
 
                         RDS_DATABASE.session.commit()
 
+                    if len(request.files) != 0:
+                        s3.Bucket(S3_BUCKET_NAME).upload_fileobj(uploaded_file, hashed_filename)
+
+                        usuario = RDS_DATABASE.session.query(Usuario).filter_by(id=session.get("id")).first()
+
+                        RDS_DATABASE.session.query(Imagem).filter_by(id=usuario.id_profile_picture).update({
+                            "file_name": uploaded_file.filename,
+                            "file_size": file_size,
+                            "bucket_file_name": hashed_filename,
+                            "upload_date": datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+                        })
+                        RDS_DATABASE.session.commit()
+
                     session["hashed_password"] = password # salva a nova senha ou senha inalterada na >
 
                 except Exception as ex:
@@ -95,10 +115,11 @@ def edit_profile():
         if request.method == 'GET':
             # Recupera as informações para mostrar na página de edição
             user = RDS_DATABASE.session.query(Usuario).filter_by(id=session.get('id')).first()
+            pfp = RDS_DATABASE.session.query(Imagem).filter_by(id=user.id_profile_picture).first()
 
             if user is not None:
                 session["hashed_password"] = user.password
-                return render_template("edit_profile.html", user=user)
+                return render_template("edit_profile.html", user=user, pfp=pfp)
             else:
                 flash("Você não está logado!", "erro")
                 return redirect(url_for('auth.login'))
