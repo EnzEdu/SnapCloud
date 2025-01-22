@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, current_app, session,flash, redirect, url_for
-from utilities import allowed_audio_file, UPLOAD_FOLDER, DB_NAME
+from utilities import  UPLOAD_FOLDER, DB_NAME
 import os
-from utilities import extract_audio_info
+from utilities import allowed_file, extract_audio_info
 from werkzeug.utils import secure_filename
 import sqlite3
 
@@ -16,7 +16,7 @@ def upload_audio():
         
         file = request.files['file']
 
-        if file and allowed_audio_file(file.filename):
+        if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
