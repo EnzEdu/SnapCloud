@@ -10,9 +10,7 @@ Um projeto de sistema de gerenciamento multimídia utilizando AWS para a discipl
 `source venv/bin/activate`
 3. Instale as dependências com o PIP:
 `pip3 install -r requirements.txt`
-4. Execute o arquivo "run.py" para criar o banco de dados e arquivos auxiliares:
-`python3 -m run.py`
-5. Inicialize o servidor:
+4. Inicialize o servidor:
 `flask --app app run --host=0.0.0.0 --port=5000`
 
 ## Para o Windows
@@ -22,7 +20,5 @@ Um projeto de sistema de gerenciamento multimídia utilizando AWS para a discipl
 `venv/Scripts/activate`
 3. Instale as dependências com o PIP:
 `pip install -r requirements.txt`
-4. Execute o arquivo "run.py" para criar o banco de dados e arquivos auxiliares:
-`python run.py`
-5. Inicialize o servidor:
+4. Inicialize o servidor:
 `flask --app app run --host=0.0.0.0 --port=5000`
