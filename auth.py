@@ -5,7 +5,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 import uuid
 from rds import RDS_DATABASE, Usuario
-from edit_profile import update_profile_picture
 import pymysql
 from s3 import s3, S3_BUCKET_NAME, S3_BUCKET_REGION, Imagem
 from PIL import Image
